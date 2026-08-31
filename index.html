@@ -1,0 +1,3466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#141b26">
+<meta name="description" content="Apostila HTTP, JDBC, React, mapa mental e quizzes — tudo offline em um arquivo">
+<title>Estudo Web Completo — Backend + Frontend</title>
+<style>
+:root {
+  --bg: #0a0e14;
+  --surface: #141b26;
+  --surface2: #1a2332;
+  --surface-hover: #243044;
+  --border: #2d3a4f;
+  --text: #e8edf5;
+  --text-muted: #8494ab;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+  --http: #06b6d4;
+  --http-soft: rgba(6, 182, 212, 0.1);
+  --jdbc: #a78bfa;
+  --jdbc-soft: rgba(167, 139, 250, 0.1);
+  --react: #61dafb;
+  --react-soft: rgba(97, 218, 251, 0.1);
+  --warn: #f59e0b;
+  --warn-soft: rgba(245, 158, 11, 0.1);
+  --ok: #22c55e;
+  --err: #ef4444;
+  --code: #0d1117;
+  --mono: Consolas, "Cascadia Code", monospace;
+  --font: "Segoe UI", system-ui, sans-serif;
+  --sidebar: 300px;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Hub index */
+.hub {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.hub h1 { font-size: 2rem; margin-bottom: 8px; }
+.hub > p { color: var(--text-muted); margin-bottom: 32px; }
+
+.hub-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.hub-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: border-color 0.15s, transform 0.15s;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.hub-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.hub-card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+.hub-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; }
+.hub-card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.topbar a { font-size: 0.85rem; }
+.topbar-title { font-weight: 600; font-size: 0.95rem; }
+
+.pill {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.pill.http { background: var(--http-soft); color: var(--http); border-color: transparent; }
+.pill.jdbc { background: var(--jdbc-soft); color: var(--jdbc); border-color: transparent; }
+.pill.react { background: var(--react-soft); color: var(--react); border-color: transparent; }
+
+/* Layout apostila / mapa */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar) 1fr;
+  height: calc(100vh - 49px);
+}
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; height: auto; }
+  .sidebar { max-height: 40vh; border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-head { padding: 14px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.sidebar-head h2 { font-size: 0.9rem; margin-bottom: 8px; }
+
+.search {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.search:focus { outline: none; border-color: var(--accent); }
+
+.tree-wrap { overflow-y: auto; flex: 1; padding: 6px 0 16px; }
+.tree-stats { padding: 6px 16px; font-size: 0.7rem; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px 5px 0;
+  cursor: pointer;
+  font-size: 0.8rem;
+  border-left: 3px solid transparent;
+}
+
+.tree-item:hover { background: var(--surface-hover); }
+.tree-item.active { background: var(--accent-soft); border-left-color: var(--accent); }
+.tree-item.http > .tree-label { color: var(--http); font-weight: 600; }
+.tree-item.jdbc > .tree-label { color: var(--jdbc); font-weight: 600; }
+.tree-item.react > .tree-label { color: var(--react); font-weight: 600; }
+.tree-item.root > .tree-label { color: var(--accent); font-weight: 700; }
+
+.tree-toggle {
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--text-muted); font-size: 0.6rem;
+}
+
+.tree-toggle.empty { visibility: hidden; }
+.tree-children { display: none; }
+.tree-children.open { display: block; }
+.tree-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.main {
+  overflow-y: auto;
+  padding: 24px 28px 48px;
+}
+
+.breadcrumb { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 14px; }
+.breadcrumb span { color: var(--accent); }
+
+.content-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 99px;
+  margin-bottom: 10px;
+}
+
+.content-tag.http { background: var(--http-soft); color: var(--http); }
+.content-tag.jdbc { background: var(--jdbc-soft); color: var(--jdbc); }
+.content-tag.react { background: var(--react-soft); color: var(--react); }
+.content-tag.root { background: var(--accent-soft); color: var(--accent); }
+.content-tag.warn { background: var(--warn-soft); color: var(--warn); }
+
+.main h1 { font-size: 1.6rem; margin-bottom: 6px; }
+.subtitle { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 20px; }
+
+.section { margin-bottom: 24px; }
+.section h3 {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section p, .section li { font-size: 0.9rem; margin-bottom: 8px; }
+.section ul, .section ol { padding-left: 20px; margin-bottom: 10px; }
+
+pre, code {
+  font-family: var(--mono);
+}
+
+pre {
+  background: var(--code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.78rem;
+  overflow-x: auto;
+  margin: 10px 0;
+  color: #c9d1d9;
+  line-height: 1.45;
+}
+
+code {
+  background: var(--code);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  margin: 10px 0;
+}
+
+th, td { border: 1px solid var(--border); padding: 8px 11px; text-align: left; }
+th { background: var(--surface2); color: var(--text-muted); font-weight: 600; }
+
+.alert {
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  margin: 12px 0;
+}
+
+.alert.warn { background: var(--warn-soft); border: 1px solid rgba(245,158,11,0.35); color: var(--warn); }
+.alert.ok { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: var(--ok); }
+.alert.err { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--err); }
+
+.diagram {
+  background: var(--code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  white-space: pre;
+  overflow-x: auto;
+  color: #8b949e;
+}
+
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
+@media (max-width: 640px) { .compare { grid-template-columns: 1fr; } }
+
+.compare-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.compare-box h4 { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+.compare-box.bad { border-color: rgba(239,68,68,0.4); }
+.compare-box.good { border-color: rgba(34,197,94,0.4); }
+
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+
+.nav-row { display: flex; gap: 8px; margin-top: 28px; flex-wrap: wrap; }
+
+.btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+
+.btn:hover { background: var(--surface-hover); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Mapa mental visual */
+.mind-visual {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.mind-root {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.mind-root span {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 99px;
+  cursor: pointer;
+}
+
+.mind-branches {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.mind-branch {
+  flex: 1;
+  min-width: 200px;
+  max-width: 280px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.mind-branch h4 {
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--border);
+  cursor: pointer;
+}
+
+.mind-branch.http h4 { color: var(--http); }
+.mind-branch.jdbc h4 { color: var(--jdbc); }
+.mind-branch.react h4 { color: var(--react); }
+
+.mind-leaf {
+  font-size: 0.78rem;
+  padding: 7px 10px;
+  margin-bottom: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mind-leaf:hover { border-color: var(--text-muted); }
+.mind-leaf.active { border-color: var(--accent); background: var(--accent-soft); }
+
+.apostila-all .section-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.apostila-all .section-block h2 {
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+mark { background: rgba(59,130,246,0.25); color: var(--text); padding: 0 2px; border-radius: 2px; }
+
+/* Plataforma — layout e responsivo */
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+}
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+}
+
+.tab-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 8px 12px;
+  padding-top: max(8px, env(safe-area-inset-top));
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: relative;
+  z-index: 50;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+
+.tab-btn,
+.sub-tab,
+.filter-btn,
+.sidebar-toggle,
+.home-card,
+.btn,
+.tree-item,
+.mind-leaf,
+.mind-root span,
+.mind-branch h4 {
+  -webkit-tap-highlight-color: rgba(59, 130, 246, 0.25);
+  touch-action: manipulation;
+}
+
+.tab-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface2);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 44px;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.panel {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.panel.active { display: flex; }
+
+.panel-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.hidden { display: none !important; }
+
+.study-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sub-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sub-tab {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-family: inherit;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+.sub-tab.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.home-hero {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+  padding-bottom: max(48px, env(safe-area-inset-bottom));
+  text-align: center;
+}
+
+.home-hero h1 { font-size: clamp(1.4rem, 4vw, 2rem); margin-bottom: 12px; }
+.home-hero > p { color: var(--text-muted); margin-bottom: 16px; font-size: 0.95rem; }
+
+.mobile-tip {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 14px;
+  text-align: left;
+}
+
+.home-card {
+  display: block;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  color: inherit;
+  text-align: left;
+}
+
+.home-card:active { border-color: var(--accent); background: var(--surface-hover); }
+.home-card h3 { font-size: 1rem; margin-bottom: 6px; pointer-events: none; }
+.home-card p { font-size: 0.85rem; color: var(--text-muted); pointer-events: none; }
+
+.study-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar) 1fr;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.sidebar-toggle {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--accent-soft);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--accent);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+  width: 100%;
+  text-align: left;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+}
+
+.sidebar-toggle .icon { font-size: 1.2rem; }
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.quiz-wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  padding-bottom: max(60px, env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+.quiz-wrap h1 { font-size: clamp(1.2rem, 3.5vw, 1.6rem); }
+
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+
+.stat-card .value { font-size: clamp(1.2rem, 3vw, 1.5rem); font-weight: 700; color: var(--accent); }
+.stat-card .label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; }
+
+.progress-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 20px; }
+.progress-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.875rem; }
+.progress-track { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); width: 0; transition: width 0.3s; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+
+.filter-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: inherit;
+  min-height: 44px;
+}
+
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.block-title { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 24px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+.question-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+.question-card.ok { border-color: var(--ok); background: rgba(34, 197, 94, 0.08); }
+.question-card.bad { border-color: var(--err); background: rgba(239, 68, 68, 0.08); }
+
+.question-header { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+
+.question-number {
+  width: 34px;
+  height: 34px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.question-text { font-size: 0.92rem; line-height: 1.5; word-break: break-word; }
+
+pre.code-block {
+  background: var(--code);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: clamp(0.68rem, 2.5vw, 0.78rem);
+  color: #c9d1d9;
+  -webkit-overflow-scrolling: touch;
+}
+
+.options { list-style: none; margin: 0; padding: 0; }
+
+.option {
+  cursor: pointer;
+}
+
+.option label {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  align-items: flex-start;
+  min-height: 48px;
+  border: 1px solid transparent;
+}
+
+.option:active label { background: var(--surface-hover); }
+.option.ok label { background: rgba(34, 197, 94, 0.12); border-color: var(--ok); }
+.option.bad label { background: rgba(239, 68, 68, 0.12); border-color: var(--err); }
+
+.option input[type="radio"] {
+  margin-top: 4px;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
+
+.feedback { margin-top: 10px; font-size: 0.85rem; padding: 8px 12px; border-radius: 6px; display: none; }
+.feedback.show { display: block; }
+.feedback.ok { background: rgba(34, 197, 94, 0.12); color: var(--ok); }
+.feedback.bad { background: rgba(239, 68, 68, 0.12); color: var(--err); }
+
+.result-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 16px; margin-bottom: 20px; text-align: center; }
+.result-panel.show { display: block; }
+.result-score { font-size: clamp(2rem, 6vw, 2.5rem); font-weight: 800; margin: 8px 0; }
+
+.quiz-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+.quiz-actions .btn { min-width: 130px; min-height: 48px; font-size: 1rem; }
+
+.main table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.main pre { overflow-x: auto; -webkit-overflow-scrolling: touch; font-size: clamp(0.72rem, 2.5vw, 0.82rem); }
+.main h1 { font-size: clamp(1.25rem, 4vw, 1.6rem); }
+.compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 12px; }
+
+.nav-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+.nav-row .btn { flex: 1; min-width: 120px; min-height: 48px; }
+
+.tree-item { min-height: 40px; }
+
+/* ── Tablet / Mobile ── */
+@media (max-width: 900px) {
+  :root { --sidebar: 280px; }
+
+  .mobile-tip { display: block; }
+
+  .study-layout {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .sidebar-toggle { display: flex; }
+
+  .study-layout .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(88vw, 320px);
+    z-index: 210;
+    max-height: none;
+    border-right: 1px solid var(--border);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(-105%);
+    transition: transform 0.22s ease, visibility 0.22s;
+  }
+
+  .study-layout.sidebar-open .sidebar {
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .study-layout .main {
+    flex: 1;
+    min-height: 0;
+    padding: 16px;
+    width: 100%;
+  }
+
+  .mind-branches { flex-direction: column; align-items: stretch; }
+  .mind-branch { max-width: none; min-width: 0; }
+}
+
+@media (min-width: 901px) {
+  .mobile-tip { display: none; }
+}
+
+@media (max-width: 600px) {
+  .tab-btn { padding: 8px 10px; font-size: 0.72rem; }
+  .home-hero { padding: 24px 16px 40px; }
+  .quiz-wrap { padding: 16px 12px 48px; }
+  .sub-tabs { padding: 8px 12px; }
+  .question-header { gap: 8px; }
+  .question-number { width: 30px; height: 30px; font-size: 0.85rem; }
+  .option label { padding: 14px 12px; font-size: 0.85rem; }
+}
+
+@media (max-width: 380px) {
+  .tab-btn { padding: 7px 8px; font-size: 0.68rem; }
+}
+
+.flex-col { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.full-read { flex: 1; min-height: 0; }
+
+.flex-col { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.full-read { flex: 1; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+<nav class="tab-bar" role="tablist" aria-label="Seções">
+  <button type="button" class="tab-btn active" data-panel="home" role="tab">Início</button>
+  <button type="button" class="tab-btn" data-panel="backend" role="tab">Backend</button>
+  <button type="button" class="tab-btn" data-panel="frontend" role="tab">Frontend</button>
+  <button type="button" class="tab-btn" data-panel="mapa" role="tab">Mapa</button>
+  <button type="button" class="tab-btn" data-panel="quiz-backend" role="tab">Quiz 100</button>
+  <button type="button" class="tab-btn" data-panel="quiz-react" role="tab">Quiz React</button>
+</nav>
+
+<section id="panel-home" class="panel active panel-scroll" role="tabpanel">
+  <div class="home-hero">
+    <h1>Estudo Web Completo</h1>
+    <p>Um único arquivo HTML com apostilas, mapa mental e quizzes. Funciona offline no celular e no PC.</p>
+    <div class="mobile-tip">📱 <strong>No celular:</strong> toque nas abas acima (deslize para ver todas). Nas apostilas, toque em <strong>☰ Índice</strong> para ver os capítulos. Abra com <strong>Chrome</strong> ou <strong>Safari</strong> — não use o visualizador do WhatsApp.</div>
+    <div class="home-grid">
+      <button type="button" class="home-card" data-go="backend"><h3>Apostila Backend</h3><p>HTTP + JDBC Spring Boot</p></button>
+      <button type="button" class="home-card" data-go="frontend"><h3>Apostila Frontend</h3><p>React — JSX, props, useState</p></button>
+      <button type="button" class="home-card" data-go="mapa"><h3>Mapa Mental</h3><p>Visão geral de todos os tópicos</p></button>
+      <button type="button" class="home-card" data-go="quiz-backend"><h3>Quiz Backend</h3><p>100 questões HTTP + JDBC</p></button>
+      <button type="button" class="home-card" data-go="quiz-react"><h3>Quiz React</h3><p>14 questões do simulado</p></button>
+    </div>
+  </div>
+</section>
+
+<section id="panel-backend" class="panel" role="tabpanel">
+  <div class="sub-tabs">
+    <button type="button" class="sub-tab active" data-view="sidebar" data-for="backend">Capítulos</button>
+    <button type="button" class="sub-tab" data-view="full" data-for="backend">Leitura contínua</button>
+  </div>
+  
+  <div id="view-backend-sidebar" class="study-view flex-col">
+    <div class="sidebar-overlay" data-overlay="layout-backend"></div>
+    <button type="button" class="sidebar-toggle" data-sidebar-toggle="layout-backend" aria-label="Abrir índice">
+      <span class="icon">☰</span> Índice — Backend
+    </button>
+    <div id="layout-backend" class="study-layout">
+      <aside class="sidebar">
+        <div class="sidebar-head"><h2>Backend</h2><input class="search" id="search-backend" placeholder="Buscar..." type="search"></div>
+        <div class="tree-stats" id="stats-backend"></div>
+        <div class="tree-wrap" id="tree-backend"></div>
+      </aside>
+      <div class="main panel-scroll">
+        <div class="breadcrumb" id="bc-backend"></div>
+        <div id="content-backend"></div>
+        <div class="nav-row">
+          <button type="button" class="btn" id="prev-backend">← Anterior</button>
+          <button type="button" class="btn primary" id="next-backend">Próximo →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="view-backend-full" class="panel-scroll hidden full-read" style="padding:16px 20px">
+    <div id="all-backend" class="apostila-all"></div>
+  </div>
+</section>
+
+<section id="panel-frontend" class="panel" role="tabpanel">
+  <div class="sub-tabs">
+    <button type="button" class="sub-tab active" data-view="sidebar" data-for="frontend">Capítulos</button>
+    <button type="button" class="sub-tab" data-view="full" data-for="frontend">Leitura contínua</button>
+  </div>
+  
+  <div id="view-frontend-sidebar" class="study-view flex-col">
+    <div class="sidebar-overlay" data-overlay="layout-frontend"></div>
+    <button type="button" class="sidebar-toggle" data-sidebar-toggle="layout-frontend" aria-label="Abrir índice">
+      <span class="icon">☰</span> Índice — React
+    </button>
+    <div id="layout-frontend" class="study-layout">
+      <aside class="sidebar">
+        <div class="sidebar-head"><h2>React</h2><input class="search" id="search-frontend" placeholder="Buscar..." type="search"></div>
+        <div class="tree-stats" id="stats-frontend"></div>
+        <div class="tree-wrap" id="tree-frontend"></div>
+      </aside>
+      <div class="main panel-scroll">
+        <div class="breadcrumb" id="bc-frontend"></div>
+        <div id="content-frontend"></div>
+        <div class="nav-row">
+          <button type="button" class="btn" id="prev-frontend">← Anterior</button>
+          <button type="button" class="btn primary" id="next-frontend">Próximo →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="view-frontend-full" class="panel-scroll hidden full-read" style="padding:16px 20px">
+    <div id="all-frontend" class="apostila-all"></div>
+  </div>
+</section>
+
+<section id="panel-mapa" class="panel" role="tabpanel">
+  <div class="sidebar-overlay" data-overlay="layout-mapa"></div>
+  <button type="button" class="sidebar-toggle" data-sidebar-toggle="layout-mapa" aria-label="Abrir índice">
+    <span class="icon">☰</span> Índice — Mapa Mental
+  </button>
+  <div id="layout-mapa" class="study-layout flex-col" style="flex:1">
+    <aside class="sidebar">
+      <div class="sidebar-head"><h2>Mapa Mental</h2><input class="search" id="search-mapa" placeholder="Buscar..." type="search"></div>
+      <div class="tree-stats" id="stats-mapa"></div>
+      <div class="tree-wrap" id="tree-mapa"></div>
+    </aside>
+    <div class="main panel-scroll">
+      <div class="mind-visual" id="mind-visual"></div>
+      <div class="breadcrumb" id="bc-mapa"></div>
+      <div id="content-mapa"></div>
+      <div class="nav-row">
+        <button type="button" class="btn" id="prev-mapa">← Anterior</button>
+        <button type="button" class="btn primary" id="next-mapa">Próximo →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="panel-quiz-backend" class="panel panel-scroll" role="tabpanel">
+  <div class="quiz-wrap">
+    <h1 style="text-align:center;margin-bottom:8px">Quiz Backend — HTTP + JDBC</h1>
+    <p style="text-align:center;color:var(--text-muted);margin-bottom:24px">100 questões · 20 de código</p>
+    <div class="stats-bar">
+      <div class="stat-card"><div class="value">100</div><div class="label">Total</div></div>
+      <div class="stat-card"><div class="value" id="qb-answered">0</div><div class="label">Respondidas</div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-header"><span>Progresso</span><span id="qb-plabel">0/100</span></div>
+      <div class="progress-track"><div class="progress-fill" id="qb-pfill"></div></div>
+    </div>
+    <div class="filters" id="qb-filters">
+      <button type="button" class="filter-btn active" data-f="all">Todas</button>
+      <button type="button" class="filter-btn" data-f="http">HTTP</button>
+      <button type="button" class="filter-btn" data-f="jdbc">JDBC</button>
+      <button type="button" class="filter-btn" data-f="code">Código</button>
+    </div>
+    <div class="result-panel" id="qb-result">
+      <div class="result-score" id="qb-score">0/100</div>
+      <p id="qb-msg"></p>
+    </div>
+    <form id="qb-form" onsubmit="return false"></form>
+    <div class="quiz-actions">
+      <button type="button" class="btn primary" id="qb-go">Corrigir</button>
+      <button type="button" class="btn" id="qb-reset">Reiniciar</button>
+    </div>
+  </div>
+</section>
+
+<section id="panel-quiz-react" class="panel panel-scroll" role="tabpanel">
+  <div class="quiz-wrap">
+    <h1 style="text-align:center;margin-bottom:8px">Quiz React</h1>
+    <p style="text-align:center;color:var(--text-muted);margin-bottom:24px">14 questões do simulado</p>
+    <div class="result-panel" id="qr-result">
+      <div class="result-score" id="qr-score">0/14</div>
+      <p id="qr-msg"></p>
+    </div>
+    <form id="qr-form" onsubmit="return false"></form>
+    <div class="quiz-actions">
+      <button type="button" class="btn primary" id="qr-go">Corrigir</button>
+      <button type="button" class="btn" id="qr-reset">Reiniciar</button>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+window.STUDY = {
+  TREE: [
+    {
+      "id": "inicio",
+      "label": "Início",
+      "branch": "root",
+      "children": [
+        {
+          "id": "inicio",
+          "label": "Bem-vindo ao curso"
+        }
+      ]
+    },
+    {
+      "id": "http-root",
+      "label": "Parte 1 — HTTP",
+      "branch": "http",
+      "children": [
+        {
+          "id": "http-fund",
+          "label": "Fundamentos",
+          "children": [
+            {
+              "id": "http-intro",
+              "label": "O que é HTTP?"
+            },
+            {
+              "id": "http-client-server",
+              "label": "Cliente–Servidor"
+            },
+            {
+              "id": "http-stateless",
+              "label": "Stateless"
+            },
+            {
+              "id": "http-request",
+              "label": "Requisição (Request)"
+            },
+            {
+              "id": "http-response",
+              "label": "Resposta (Response)"
+            }
+          ]
+        },
+        {
+          "id": "http-methods-root",
+          "label": "Métodos HTTP",
+          "children": [
+            {
+              "id": "http-methods",
+              "label": "Visão geral"
+            },
+            {
+              "id": "http-get",
+              "label": "GET"
+            },
+            {
+              "id": "http-post",
+              "label": "POST"
+            },
+            {
+              "id": "http-put",
+              "label": "PUT"
+            },
+            {
+              "id": "http-patch",
+              "label": "PATCH"
+            },
+            {
+              "id": "http-delete",
+              "label": "DELETE"
+            },
+            {
+              "id": "http-head",
+              "label": "HEAD"
+            },
+            {
+              "id": "http-options",
+              "label": "OPTIONS"
+            },
+            {
+              "id": "http-safe-idempotent",
+              "label": "Seguro vs Idempotente"
+            }
+          ]
+        },
+        {
+          "id": "http-status-root",
+          "label": "Status Codes",
+          "children": [
+            {
+              "id": "http-status-2xx",
+              "label": "2xx Sucesso"
+            },
+            {
+              "id": "http-status-3xx",
+              "label": "3xx Redirecionamento"
+            },
+            {
+              "id": "http-status-4xx",
+              "label": "4xx Erro do Cliente"
+            },
+            {
+              "id": "http-status-5xx",
+              "label": "5xx Erro do Servidor"
+            },
+            {
+              "id": "http-rest-status",
+              "label": "Regras REST (API Anime)"
+            }
+          ]
+        },
+        {
+          "id": "http-extra",
+          "label": "Headers, HTTPS e REST",
+          "children": [
+            {
+              "id": "http-headers",
+              "label": "Cabeçalhos HTTP"
+            },
+            {
+              "id": "http-https",
+              "label": "HTTP vs HTTPS"
+            },
+            {
+              "id": "http-rest-practices",
+              "label": "Boas Práticas REST"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "jdbc-root",
+      "label": "Parte 2 — JDBC Spring",
+      "branch": "jdbc",
+      "children": [
+        {
+          "id": "jdbc-fund",
+          "label": "Fundamentos",
+          "children": [
+            {
+              "id": "jdbc-intro",
+              "label": "O que é JDBC?"
+            },
+            {
+              "id": "jdbc-jdbctemplate",
+              "label": "JdbcTemplate"
+            },
+            {
+              "id": "jdbc-di-constructor",
+              "label": "Injeção por Construtor"
+            },
+            {
+              "id": "jdbc-datasource",
+              "label": "DataSource"
+            },
+            {
+              "id": "jdbc-anime-entity",
+              "label": "Entidade Anime"
+            }
+          ]
+        },
+        {
+          "id": "jdbc-crud-root",
+          "label": "CRUD Completo",
+          "children": [
+            {
+              "id": "jdbc-listar",
+              "label": "Listar — query()"
+            },
+            {
+              "id": "jdbc-cadastrar",
+              "label": "Cadastrar — KeyHolder"
+            },
+            {
+              "id": "jdbc-buscar",
+              "label": "Buscar — queryForObject()"
+            },
+            {
+              "id": "jdbc-atualizar",
+              "label": "Atualizar — update()"
+            },
+            {
+              "id": "jdbc-remover",
+              "label": "Remover — 204"
+            },
+            {
+              "id": "jdbc-existe",
+              "label": "Existe — COUNT(*)"
+            }
+          ]
+        },
+        {
+          "id": "jdbc-advanced",
+          "label": "Mapper, Segurança e Referência",
+          "children": [
+            {
+              "id": "jdbc-rowmapper",
+              "label": "BeanPropertyRowMapper"
+            },
+            {
+              "id": "jdbc-mapper-rules",
+              "label": "Regras do Mapper"
+            },
+            {
+              "id": "jdbc-sql-injection",
+              "label": "SQL Injection"
+            },
+            {
+              "id": "jdbc-keyholder",
+              "label": "KeyHolder"
+            },
+            {
+              "id": "jdbc-exceptions",
+              "label": "Exceções"
+            },
+            {
+              "id": "jdbc-methods-summary",
+              "label": "Resumo dos Métodos"
+            },
+            {
+              "id": "jdbc-annotations",
+              "label": "Anotações Spring"
+            },
+            {
+              "id": "jdbc-rest-flow",
+              "label": "Fluxo REST + JDBC"
+            },
+            {
+              "id": "jdbc-exam-traps",
+              "label": "Armadilhas de Prova"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "react-root",
+      "label": "Parte 3 — React",
+      "branch": "react",
+      "children": [
+        {
+          "id": "react-fund",
+          "label": "Fundamentos",
+          "children": [
+            {
+              "id": "react-intro",
+              "label": "Introdução ao React"
+            },
+            {
+              "id": "react-jsx",
+              "label": "JSX — Sintaxe"
+            },
+            {
+              "id": "react-jsx-rules",
+              "label": "Regras do JSX"
+            },
+            {
+              "id": "react-components",
+              "label": "Componentes"
+            },
+            {
+              "id": "react-import-export",
+              "label": "Import / Export"
+            }
+          ]
+        },
+        {
+          "id": "react-props-root",
+          "label": "Props",
+          "children": [
+            {
+              "id": "react-props-destructure",
+              "label": "Desestruturação"
+            },
+            {
+              "id": "react-props-rules",
+              "label": "Regras das Props"
+            },
+            {
+              "id": "react-children",
+              "label": "Children"
+            }
+          ]
+        },
+        {
+          "id": "react-state-root",
+          "label": "Estado e Eventos",
+          "children": [
+            {
+              "id": "react-state",
+              "label": "Estado (State)"
+            },
+            {
+              "id": "react-usestate",
+              "label": "useState"
+            },
+            {
+              "id": "react-events",
+              "label": "Eventos — onClick"
+            }
+          ]
+        },
+        {
+          "id": "react-ui",
+          "label": "Renderização e Fragment",
+          "children": [
+            {
+              "id": "react-conditional",
+              "label": "Renderização Condicional"
+            },
+            {
+              "id": "react-fragment",
+              "label": "Fragment"
+            },
+            {
+              "id": "react-exam-traps",
+              "label": "Armadilhas de Prova"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "resumo-root",
+      "label": "Resumo Final",
+      "branch": "root",
+      "children": [
+        {
+          "id": "resumo-final",
+          "label": "Tabelas de Revisão"
+        }
+      ]
+    }
+  ],
+  CONTENT: {
+    "inicio": {
+      "tag": "root",
+      "tagLabel": "Início",
+      "title": "Programação Web — Material Completo",
+      "subtitle": "Do zero ao backend e frontend: HTTP, JDBC com Spring e React",
+      "pills": [
+        "Iniciante",
+        "3 módulos",
+        "59 tópicos"
+      ],
+      "sections": [
+        {
+          "h": "Bem-vindo!",
+          "html": "<p>Este material foi feito para quem <strong>nunca programou para a web</strong> e precisa entender HTTP, APIs REST, banco de dados com Java/Spring e React no frontend.</p><div class=\"alert ok\"><strong>Como estudar:</strong> siga a ordem da árvore à esquerda. Cada tópico tem exemplos, tabelas e alertas de prova.</div>"
+        },
+        {
+          "h": "Os três módulos",
+          "html": "<div class=\"compare\"><div class=\"compare-box\"><h4>Parte 1 — HTTP</h4><p>Como cliente e servidor conversam na web. Métodos, status codes, headers e REST.</p></div><div class=\"compare-box\"><h4>Parte 2 — JDBC Spring</h4><p>Conectar Java ao banco com JdbcTemplate. CRUD completo da API de Animes.</p></div><div class=\"compare-box\"><h4>Parte 3 — React</h4><p>Componentes, JSX, props, estado e renderização condicional.</p></div></div>"
+        },
+        {
+          "h": "Pré-requisitos",
+          "html": "<p>Você só precisa saber o básico de programação (variáveis, funções, if/else). Todo conceito web é explicado do zero.</p>"
+        }
+      ]
+    },
+    "http-intro": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "O que é HTTP?",
+      "subtitle": "O protocolo que faz a web funcionar",
+      "pills": [
+        "Protocolo",
+        "Camada aplicação",
+        "Base das APIs"
+      ],
+      "sections": [
+        {
+          "h": "Definição",
+          "html": "<p><strong>HTTP</strong> (HyperText Transfer Protocol) é o <em>protocolo de comunicação da Web</em>. Ele define <strong>como</strong> cliente e servidor trocam mensagens para acessar recursos: páginas HTML, APIs JSON, imagens, arquivos etc.</p>"
+        },
+        {
+          "h": "Características principais",
+          "html": "<table><thead><tr><th>Característica</th><th>Explicação</th></tr></thead><tbody><tr><td>Camada de aplicação</td><td>Opera no modelo OSI/TCP-IP — acima do TCP</td></tr><tr><td>Transporte</td><td>Usa <strong>TCP</strong> (porta 80 HTTP, 443 HTTPS)</td></tr><tr><td>Formato</td><td>HTTP/1.1 = texto legível; HTTP/2 e HTTP/3 = binário compactado</td></tr><tr><td>Uso</td><td>Base de <strong>APIs REST</strong> e de todo site/app web</td></tr></tbody></table>"
+        },
+        {
+          "h": "Analogia simples",
+          "html": "<p>Pense no HTTP como o <strong>idioma</strong> que seu navegador fala com servidores. Você pede algo (requisição) e o servidor responde (resposta) — sempre nessa ordem.</p><div class=\"diagram\"><pre>Cliente  ──►  \"Quero /animes\"  ──►  Servidor\nCliente  ◄──  \"Aqui está o JSON\" ◄──  Servidor</pre></div>"
+        }
+      ]
+    },
+    "http-client-server": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Modelo Cliente–Servidor",
+      "subtitle": "Quem pede e quem atende na web",
+      "pills": [
+        "Request",
+        "Response",
+        "Cliente inicia"
+      ],
+      "sections": [
+        {
+          "h": "Diagrama",
+          "html": "<div class=\"diagram\"><pre>┌──────────┐    Requisição (Request)     ┌──────────┐\n│  Cliente │ ──────────────────────────► │ Servidor │\n│ (browser,│                              │  (API,   │\n│  app,    │ ◄────────────────────────── │  web)    │\n│  Postman)│    Resposta (Response)       └──────────┘\n└──────────┘</pre></div>"
+        },
+        {
+          "h": "Papéis",
+          "html": "<table><thead><tr><th>Papel</th><th>Responsabilidade</th><th>Exemplos</th></tr></thead><tbody><tr><td><strong>Cliente</strong></td><td>Inicia a comunicação. Envia método, URL, headers e corpo.</td><td>Chrome, Firefox, app mobile, Postman, curl</td></tr><tr><td><strong>Servidor</strong></td><td>Escuta conexões, processa e devolve status, headers e corpo.</td><td>Spring Boot, Node.js, Nginx + API</td></tr></tbody></table>"
+        },
+        {
+          "h": "Regra de ouro",
+          "html": "<div class=\"alert warn\"><strong>O cliente SEMPRE inicia.</strong> O servidor nunca envia dados por conta própria (exceto tecnologias push como WebSocket, que começam com HTTP).</div>"
+        }
+      ]
+    },
+    "http-stateless": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Stateless (Sem Estado)",
+      "subtitle": "Cada requisição é independente",
+      "pills": [
+        "Stateless",
+        "Token",
+        "Cookie"
+      ],
+      "sections": [
+        {
+          "h": "O que significa",
+          "html": "<p>HTTP é <strong>stateless</strong>: cada requisição é <strong>independente</strong>. O servidor <strong>não guarda memória</strong> da requisição anterior.</p>"
+        },
+        {
+          "h": "Consequências práticas",
+          "html": "<ul><li><strong>Login:</strong> o cliente envia token (JWT), cookie ou session ID em <em>cada</em> requisição</li><li><strong>Escalabilidade:</strong> qualquer instância do servidor pode atender qualquer request</li><li><strong>Simplicidade:</strong> menos acoplamento entre requisições</li></ul>"
+        },
+        {
+          "h": "Armadilha de prova",
+          "html": "<div class=\"alert err\"><strong>Stateless ≠ sem banco de dados!</strong> O servidor pode persistir dados no banco. O que não persiste é o <em>contexto da conversa HTTP</em> entre requisições.</div>"
+        }
+      ]
+    },
+    "http-request": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Estrutura da Requisição (Request)",
+      "subtitle": "Linha de requisição, headers e corpo",
+      "pills": [
+        "GET /animes",
+        "Headers",
+        "Body opcional"
+      ],
+      "sections": [
+        {
+          "h": "Exemplo completo",
+          "html": "<pre><code>GET /animes HTTP/1.1          ← Linha de requisição\nHost: api.exemplo.com         ← Cabeçalhos\nAccept: application/json\nAuthorization: Bearer abc123\n                              ← Linha em branco\n                              ← Corpo (opcional)</code></pre>"
+        },
+        {
+          "h": "Partes da requisição",
+          "html": "<table><thead><tr><th>Parte</th><th>Formato</th><th>Descrição</th></tr></thead><tbody><tr><td>Linha de requisição</td><td><code>MÉTODO URI VERSÃO</code></td><td>Ex: <code>GET /animes HTTP/1.1</code></td></tr><tr><td>Cabeçalhos</td><td><code>Nome: valor</code></td><td>Metadados: tipo, auth, cache</td></tr><tr><td>Corpo</td><td>JSON, form, arquivo</td><td>Comum em POST/PUT/PATCH. GET normalmente <strong>não</strong> tem corpo</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "http-response": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Estrutura da Resposta (Response)",
+      "subtitle": "Status line, headers e corpo",
+      "pills": [
+        "200 OK",
+        "Content-Type",
+        "JSON"
+      ],
+      "sections": [
+        {
+          "h": "Exemplo completo",
+          "html": "<pre><code>HTTP/1.1 200 OK               ← Linha de status\nContent-Type: application/json\nContent-Length: 42\n                              ← Linha em branco\n{\"id\":1,\"titulo\":\"Naruto\"}    ← Corpo</code></pre>"
+        },
+        {
+          "h": "Partes da resposta",
+          "html": "<table><thead><tr><th>Parte</th><th>Formato</th><th>Descrição</th></tr></thead><tbody><tr><td>Linha de status</td><td><code>VERSÃO CÓDIGO FRASE</code></td><td>Ex: <code>HTTP/1.1 200 OK</code></td></tr><tr><td>Cabeçalhos</td><td>Metadados</td><td>Content-Type, Location, Cache-Control</td></tr><tr><td>Corpo</td><td>HTML, JSON ou vazio</td><td>204 No Content = sem corpo</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "http-methods": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Visão Geral dos Métodos HTTP",
+      "subtitle": "Os verbos que expressam a intenção da requisição",
+      "pills": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ],
+      "sections": [
+        {
+          "h": "Tabela comparativa",
+          "html": "<table><thead><tr><th>Método</th><th>Idempotente?</th><th>Seguro?</th><th>Uso principal</th><th>Corpo?</th></tr></thead><tbody><tr><td><strong>GET</strong></td><td>Sim</td><td>Sim</td><td>Buscar/ler</td><td>Não</td></tr><tr><td><strong>POST</strong></td><td>Não</td><td>Não</td><td>Criar / ação</td><td>Sim</td></tr><tr><td><strong>PUT</strong></td><td>Sim</td><td>Não</td><td>Substituir inteiro</td><td>Sim</td></tr><tr><td><strong>PATCH</strong></td><td>Não*</td><td>Não</td><td>Atualizar parcial</td><td>Sim</td></tr><tr><td><strong>DELETE</strong></td><td>Sim</td><td>Não</td><td>Remover</td><td>Opcional</td></tr><tr><td><strong>HEAD</strong></td><td>Sim</td><td>Sim</td><td>Metadados sem corpo</td><td>Não</td></tr><tr><td><strong>OPTIONS</strong></td><td>Sim</td><td>Sim</td><td>Métodos permitidos (CORS)</td><td>Não</td></tr></tbody></table><p><small>* PATCH pode ser idempotente dependendo da implementação</small></p>"
+        },
+        {
+          "h": "REST na prática",
+          "html": "<p>Em APIs REST, o <strong>verbo HTTP expressa a ação</strong> e a URL identifica o <strong>recurso</strong>: <code>GET /animes</code>, <code>POST /animes</code>, <code>DELETE /animes/{id}</code>.</p>"
+        }
+      ]
+    },
+    "http-get": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "GET — Leitura",
+      "subtitle": "Buscar recursos sem alterar o servidor",
+      "pills": [
+        "Seguro",
+        "Idempotente",
+        "200 OK"
+      ],
+      "sections": [
+        {
+          "h": "Quando usar",
+          "html": "<p>Para <strong>ler</strong> dados. Não deve alterar o estado do servidor.</p><pre><code>GET /animes\nGET /animes/550e8400-e29b-41d4-a716-446655440000\nGET /animes?autor=Oda&amp;page=1</code></pre>"
+        },
+        {
+          "h": "Características",
+          "html": "<ul><li><strong>Seguro:</strong> só leitura</li><li><strong>Idempotente:</strong> chamar 10 vezes = mesmo efeito</li><li><strong>Sem corpo</strong> na requisição (idealmente)</li><li>Parâmetros vão na <strong>query string</strong>: <code>?autor=Oda</code></li><li>Resposta típica: <strong>200 OK</strong> com JSON no corpo</li></ul>"
+        }
+      ]
+    },
+    "http-post": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "POST — Criação",
+      "subtitle": "Criar novos recursos",
+      "pills": [
+        "201 Created",
+        "Body JSON",
+        "Não idempotente"
+      ],
+      "sections": [
+        {
+          "h": "Quando usar",
+          "html": "<p>Para <strong>criar</strong> um novo recurso ou executar uma ação que altera o servidor.</p><pre><code>POST /animes\nContent-Type: application/json\n\n{\"titulo\":\"One Piece\",\"autor\":\"Oda\"}</code></pre>"
+        },
+        {
+          "h": "Resposta típica",
+          "html": "<div class=\"alert ok\"><strong>201 Created</strong> — recurso criado com sucesso. Header <code>Location</code> pode apontar a URL do novo recurso. Corpo retorna o objeto criado (com ID).</div><div class=\"alert warn\"><strong>Não idempotente:</strong> enviar o mesmo POST duas vezes pode criar dois registros.</div>"
+        }
+      ]
+    },
+    "http-put": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "PUT — Substituição Completa",
+      "subtitle": "Substituir o recurso inteiro",
+      "pills": [
+        "Idempotente",
+        "200 OK",
+        "Todos os campos"
+      ],
+      "sections": [
+        {
+          "h": "Quando usar",
+          "html": "<p>Substituir <strong>todo</strong> o recurso. O body deve conter todos os campos.</p><pre><code>PUT /animes/{id}\n{\"titulo\":\"Naruto Shippuden\",\"autor\":\"Kishimoto\"}</code></pre>"
+        },
+        {
+          "h": "PUT vs PATCH",
+          "html": "<div class=\"compare\"><div class=\"compare-box\"><h4>PUT</h4><p>Substitui o recurso <strong>inteiro</strong>. Campos omitidos podem ser apagados.</p></div><div class=\"compare-box\"><h4>PATCH</h4><p>Atualiza <strong>só os campos enviados</strong>. Resto permanece igual.</p></div></div>"
+        }
+      ]
+    },
+    "http-patch": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "PATCH — Atualização Parcial",
+      "subtitle": "Alterar apenas alguns campos",
+      "pills": [
+        "Parcial",
+        "Body mínimo"
+      ],
+      "sections": [
+        {
+          "h": "Quando usar",
+          "html": "<p>Atualizar <strong>parcialmente</strong> um recurso existente.</p><pre><code>PATCH /animes/{id}\n{\"titulo\":\"Novo título\"}</code></pre><p>Só o campo <code>titulo</code> muda; <code>autor</code> permanece o mesmo.</p>"
+        },
+        {
+          "h": "Status de resposta",
+          "html": "<p>Resposta típica: <strong>200 OK</strong> com o objeto atualizado no corpo.</p>"
+        }
+      ]
+    },
+    "http-delete": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "DELETE — Remoção",
+      "subtitle": "Excluir um recurso",
+      "pills": [
+        "204 No Content",
+        "Idempotente"
+      ],
+      "sections": [
+        {
+          "h": "Quando usar",
+          "html": "<pre><code>DELETE /animes/550e8400-e29b-41d4-a716-446655440000</code></pre>"
+        },
+        {
+          "h": "Resposta típica",
+          "html": "<div class=\"alert ok\"><strong>204 No Content</strong> — removido com sucesso, <strong>sem corpo</strong> na resposta.</div><div class=\"alert warn\"><strong>404 Not Found</strong> se o recurso não existir (boas práticas REST).</div><p><strong>Idempotente:</strong> deletar duas vezes o mesmo ID — após a primeira, a segunda retorna 404 (mesmo efeito lógico: recurso não existe).</p>"
+        }
+      ]
+    },
+    "http-head": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "HEAD — Metadados Sem Corpo",
+      "subtitle": "Igual ao GET, mas sem baixar o conteúdo",
+      "pills": [
+        "Seguro",
+        "Idempotente",
+        "Sem body"
+      ],
+      "sections": [
+        {
+          "h": "Quando usar",
+          "html": "<p>Verificar se um recurso existe, obter tamanho (<code>Content-Length</code>) ou validar cache — <strong>sem transferir o corpo</strong>.</p><pre><code>HEAD /animes/123\n→ Headers iguais ao GET, mas corpo vazio</code></pre>"
+        },
+        {
+          "h": "Casos de uso",
+          "html": "<ul><li>Verificar se arquivo existe antes de baixar</li><li>Checar ETag para cache condicional</li><li>Monitoramento de disponibilidade</li></ul>"
+        }
+      ]
+    },
+    "http-options": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "OPTIONS — Métodos Permitidos",
+      "subtitle": "Descoberta de capacidades e CORS preflight",
+      "pills": [
+        "CORS",
+        "Preflight",
+        "Seguro"
+      ],
+      "sections": [
+        {
+          "h": "Quando usar",
+          "html": "<p>O navegador envia OPTIONS automaticamente em requisições <strong>CORS preflight</strong> para perguntar quais métodos e headers são permitidos.</p><pre><code>OPTIONS /animes\n→ Allow: GET, POST, PUT, DELETE\n→ Access-Control-Allow-Methods: GET, POST, ...</code></pre>"
+        },
+        {
+          "h": "CORS explicado",
+          "html": "<p>Quando o frontend (ex: React em localhost:3000) chama API em outro domínio, o navegador faz um OPTIONS antes do POST real para verificar permissão.</p>"
+        }
+      ]
+    },
+    "http-safe-idempotent": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Seguro vs Idempotente",
+      "subtitle": "Dois conceitos fundamentais dos métodos HTTP",
+      "pills": [
+        "Prova",
+        "GET seguro",
+        "PUT idempotente"
+      ],
+      "sections": [
+        {
+          "h": "Definições",
+          "html": "<div class=\"compare\"><div class=\"compare-box\"><h4>Seguro (Safe)</h4><p><strong>Não altera</strong> o estado do servidor. Apenas leitura.</p><p>Ex: GET, HEAD, OPTIONS</p></div><div class=\"compare-box\"><h4>Idempotente</h4><p>Executar <strong>N vezes</strong> = mesmo efeito que <strong>1 vez</strong>.</p><p>Ex: GET, PUT, DELETE, HEAD, OPTIONS</p></div></div>"
+        },
+        {
+          "h": "Tabela de prova",
+          "html": "<table><thead><tr><th>Método</th><th>Seguro?</th><th>Idempotente?</th></tr></thead><tbody><tr><td>GET</td><td>✅ Sim</td><td>✅ Sim</td></tr><tr><td>POST</td><td>❌ Não</td><td>❌ Não</td></tr><tr><td>PUT</td><td>❌ Não</td><td>✅ Sim</td></tr><tr><td>PATCH</td><td>❌ Não</td><td>❌ Não*</td></tr><tr><td>DELETE</td><td>❌ Não</td><td>✅ Sim</td></tr></tbody></table>"
+        },
+        {
+          "h": "Por que importa",
+          "html": "<div class=\"alert warn\">Em caso de falha de rede, o cliente pode <strong>repetir</strong> requisições idempotentes com segurança. Repetir POST pode duplicar dados!</div>"
+        }
+      ]
+    },
+    "http-status-2xx": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Status 2xx — Sucesso",
+      "subtitle": "A requisição foi processada com sucesso",
+      "pills": [
+        "200",
+        "201",
+        "204"
+      ],
+      "sections": [
+        {
+          "h": "Códigos principais",
+          "html": "<table><thead><tr><th>Código</th><th>Nome</th><th>Quando usar</th></tr></thead><tbody><tr><td><strong>200</strong></td><td>OK</td><td>GET, PUT, PATCH bem-sucedidos — retorna corpo</td></tr><tr><td><strong>201</strong></td><td>Created</td><td>POST criou recurso — retorna corpo + Location</td></tr><tr><td><strong>204</strong></td><td>No Content</td><td>DELETE bem-sucedido — <strong>sem corpo</strong></td></tr></tbody></table>"
+        },
+        {
+          "h": "Memorize",
+          "html": "<div class=\"alert ok\"><strong>201</strong> = criou | <strong>200</strong> = leu/atualizou com corpo | <strong>204</strong> = removeu sem corpo</div>"
+        }
+      ]
+    },
+    "http-status-3xx": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Status 3xx — Redirecionamento",
+      "subtitle": "O cliente deve ir para outra URL",
+      "pills": [
+        "301",
+        "302",
+        "304"
+      ],
+      "sections": [
+        {
+          "h": "Códigos principais",
+          "html": "<table><thead><tr><th>Código</th><th>Nome</th><th>Quando usar</th></tr></thead><tbody><tr><td><strong>301</strong></td><td>Moved Permanently</td><td>URL mudou para sempre — SEO redireciona</td></tr><tr><td><strong>302</strong></td><td>Found</td><td>Redirecionamento temporário</td></tr><tr><td><strong>304</strong></td><td>Not Modified</td><td>Cache válido — não precisa baixar de novo</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "http-status-4xx": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Status 4xx — Erro do Cliente",
+      "subtitle": "Algo errado na requisição enviada",
+      "pills": [
+        "400",
+        "401",
+        "403",
+        "404",
+        "409"
+      ],
+      "sections": [
+        {
+          "h": "Códigos principais",
+          "html": "<table><thead><tr><th>Código</th><th>Nome</th><th>Quando usar</th></tr></thead><tbody><tr><td><strong>400</strong></td><td>Bad Request</td><td>JSON inválido, parâmetro faltando</td></tr><tr><td><strong>401</strong></td><td>Unauthorized</td><td>Não autenticado (falta login/token)</td></tr><tr><td><strong>403</strong></td><td>Forbidden</td><td>Autenticado, mas sem permissão</td></tr><tr><td><strong>404</strong></td><td>Not Found</td><td>Recurso não existe</td></tr><tr><td><strong>405</strong></td><td>Method Not Allowed</td><td>Verbo HTTP não permitido na rota</td></tr><tr><td><strong>409</strong></td><td>Conflict</td><td>Conflito (e-mail duplicado)</td></tr><tr><td><strong>422</strong></td><td>Unprocessable Entity</td><td>Sintaxe OK, semântica inválida</td></tr></tbody></table>"
+        },
+        {
+          "h": "401 vs 403",
+          "html": "<div class=\"compare\"><div class=\"compare-box\"><h4>401 Unauthorized</h4><p>\"Quem é você?\" — não fez login.</p></div><div class=\"compare-box\"><h4>403 Forbidden</h4><p>\"Sei quem é, mas não pode.\" — sem permissão.</p></div></div>"
+        }
+      ]
+    },
+    "http-status-5xx": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Status 5xx — Erro do Servidor",
+      "subtitle": "Falha no processamento — culpa do servidor",
+      "pills": [
+        "500",
+        "502",
+        "503"
+      ],
+      "sections": [
+        {
+          "h": "Códigos principais",
+          "html": "<table><thead><tr><th>Código</th><th>Nome</th><th>Quando usar</th></tr></thead><tbody><tr><td><strong>500</strong></td><td>Internal Server Error</td><td>Bug ou falha inesperada no código</td></tr><tr><td><strong>502</strong></td><td>Bad Gateway</td><td>Proxy recebeu resposta inválida</td></tr><tr><td><strong>503</strong></td><td>Service Unavailable</td><td>Servidor sobrecarregado ou em manutenção</td></tr></tbody></table>"
+        },
+        {
+          "h": "Dica",
+          "html": "<div class=\"alert warn\">4xx = cliente errou | 5xx = servidor errou. Nunca retorne 200 quando deu erro!</div>"
+        }
+      ]
+    },
+    "http-rest-status": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Regras REST de Status — API Anime",
+      "subtitle": "Qual status usar em cada operação CRUD",
+      "pills": [
+        "CRUD",
+        "REST",
+        "Prova"
+      ],
+      "sections": [
+        {
+          "h": "Tabela CRUD",
+          "html": "<table><thead><tr><th>Operação</th><th>Método</th><th>Sucesso</th><th>Não encontrado</th></tr></thead><tbody><tr><td>Listar</td><td>GET /animes</td><td><strong>200</strong> (lista vazia OK)</td><td>—</td></tr><tr><td>Buscar</td><td>GET /animes/{id}</td><td><strong>200</strong></td><td><strong>404</strong></td></tr><tr><td>Criar</td><td>POST /animes</td><td><strong>201</strong></td><td>—</td></tr><tr><td>Atualizar</td><td>PUT /animes/{id}</td><td><strong>200</strong></td><td><strong>404</strong></td></tr><tr><td>Remover</td><td>DELETE /animes/{id}</td><td><strong>204</strong></td><td><strong>404</strong></td></tr></tbody></table>"
+        },
+        {
+          "h": "Regra de ouro",
+          "html": "<div class=\"alert ok\"><strong>Não retorne 200 para tudo!</strong> Status codes comunicam o resultado sem precisar ler o corpo.</div>"
+        }
+      ]
+    },
+    "http-headers": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Cabeçalhos HTTP Principais",
+      "subtitle": "Metadados das mensagens request e response",
+      "pills": [
+        "Content-Type",
+        "Authorization",
+        "Accept"
+      ],
+      "sections": [
+        {
+          "h": "Tabela de headers",
+          "html": "<table><thead><tr><th>Cabeçalho</th><th>Direção</th><th>Função</th></tr></thead><tbody><tr><td><code>Host</code></td><td>Request</td><td>Domínio/porta do servidor</td></tr><tr><td><code>Content-Type</code></td><td>Ambos</td><td>Tipo do corpo (<code>application/json</code>)</td></tr><tr><td><code>Accept</code></td><td>Request</td><td>Tipos que o cliente aceita</td></tr><tr><td><code>Authorization</code></td><td>Request</td><td>Credenciais (<code>Bearer token</code>)</td></tr><tr><td><code>Location</code></td><td>Response</td><td>URL do recurso criado (com 201)</td></tr><tr><td><code>Cache-Control</code></td><td>Ambos</td><td>Regras de cache</td></tr><tr><td><code>ETag</code></td><td>Response</td><td>Versão do recurso para cache</td></tr><tr><td><code>User-Agent</code></td><td>Request</td><td>Identifica o cliente</td></tr><tr><td><code>Set-Cookie</code></td><td>Response</td><td>Define cookie no cliente</td></tr><tr><td><code>Cookie</code></td><td>Request</td><td>Envia cookies armazenados</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "http-https": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "HTTP vs HTTPS",
+      "subtitle": "Segurança na comunicação web",
+      "pills": [
+        "TLS",
+        "Porta 443",
+        "Produção"
+      ],
+      "sections": [
+        {
+          "h": "Comparação",
+          "html": "<table><thead><tr><th>Aspecto</th><th>HTTP</th><th>HTTPS</th></tr></thead><tbody><tr><td>Porta padrão</td><td>80</td><td>443</td></tr><tr><td>Criptografia</td><td>Não</td><td>Sim (TLS/SSL)</td></tr><tr><td>Integridade</td><td>Dados podem ser alterados</td><td>Protegidos</td></tr><tr><td>Autenticação do servidor</td><td>Não</td><td>Certificado digital</td></tr><tr><td>Uso atual</td><td>Legado/interno</td><td><strong>Obrigatório em produção</strong></td></tr></tbody></table>"
+        },
+        {
+          "h": "O que HTTPS garante",
+          "html": "<p>HTTPS = HTTP + <strong>TLS</strong>. Garante:</p><ul><li><strong>Confidencialidade</strong> — ninguém lê os dados no meio</li><li><strong>Integridade</strong> — dados não são alterados</li><li><strong>Autenticação</strong> — você fala com o servidor certo</li></ul>"
+        }
+      ]
+    },
+    "http-rest-practices": {
+      "tag": "http",
+      "tagLabel": "HTTP",
+      "title": "Boas Práticas REST",
+      "subtitle": "Como projetar APIs profissionais",
+      "pills": [
+        "Substantivos",
+        "JSON",
+        "Paginação"
+      ],
+      "sections": [
+        {
+          "h": "10 regras",
+          "html": "<ol><li><strong>Substantivos no plural:</strong> <code>/animes</code>, não <code>/listarAnimes</code></li><li><strong>Verbo na URL? Não!</strong> <code>GET /animes</code>, não <code>GET /getAnimes</code></li><li><strong>Status codes corretos</strong> — não 200 para tudo</li><li><strong>JSON</strong> como formato padrão</li><li><strong>Versionamento:</strong> <code>/v1/animes</code> quando necessário</li><li><strong>Paginação:</strong> <code>?page=1&amp;size=20</code></li><li><strong>Filtros:</strong> <code>GET /animes?autor=Oda</code></li><li><strong>Idempotência</strong> em PUT e DELETE</li><li><strong>HATEOAS</strong> (opcional): links no JSON</li><li><strong>Erros estruturados:</strong> <code>{\"erro\":\"Anime não encontrado\",\"codigo\":404}</code></li></ol>"
+        }
+      ]
+    },
+    "jdbc-intro": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "O que é JDBC?",
+      "subtitle": "Java Database Connectivity — conectar Java ao banco",
+      "pills": [
+        "API Java",
+        "SQL",
+        "Relacional"
+      ],
+      "sections": [
+        {
+          "h": "Definição",
+          "html": "<p><strong>JDBC</strong> (Java Database Connectivity) é a API padrão do Java para acessar bancos de dados <strong>relacionais</strong> (PostgreSQL, MySQL, H2 etc.).</p><p>Permite executar SQL via conexões, statements e result sets.</p>"
+        },
+        {
+          "h": "Problema do JDBC puro",
+          "html": "<div class=\"alert warn\">Muito código repetitivo: abrir conexão, tratar exceções, fechar recursos manualmente. Fácil esquecer de fechar e vazar conexões.</div>"
+        },
+        {
+          "h": "Solução Spring",
+          "html": "<div class=\"alert ok\"><strong>JdbcTemplate</strong> — abstrai a complexidade e gerencia conexões automaticamente. É o que usamos neste curso.</div>"
+        }
+      ]
+    },
+    "jdbc-jdbctemplate": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "JdbcTemplate",
+      "subtitle": "A classe central do Spring para SQL",
+      "pills": [
+        "query",
+        "update",
+        "queryForObject"
+      ],
+      "sections": [
+        {
+          "h": "O que faz",
+          "html": "<p><code>JdbcTemplate</code> encapsula todo o ciclo JDBC: obtém conexão do pool, executa SQL, mapeia resultados e devolve conexão ao pool.</p>"
+        },
+        {
+          "h": "Métodos principais",
+          "html": "<table><thead><tr><th>Método</th><th>Para quê</th></tr></thead><tbody><tr><td><code>query()</code></td><td>Várias linhas → List</td></tr><tr><td><code>queryForObject()</code></td><td>Uma linha ou valor escalar</td></tr><tr><td><code>update()</code></td><td>INSERT, UPDATE, DELETE</td></tr></tbody></table>"
+        },
+        {
+          "h": "Configuração automática",
+          "html": "<p>Spring Boot cria um <code>JdbcTemplate</code> automaticamente quando detecta um <code>DataSource</code> no classpath (ex: PostgreSQL + driver).</p>"
+        }
+      ]
+    },
+    "jdbc-di-constructor": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "Injeção de Dependência por Construtor",
+      "subtitle": "Como receber o JdbcTemplate no Controller",
+      "pills": [
+        "final",
+        "Construtor",
+        "Recomendado"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>@RestController\n@RequestMapping(\"/animes\")\npublic class AnimeController {\n\n    private final JdbcTemplate template;\n\n    public AnimeController(JdbcTemplate template) {\n        this.template = template;\n    }\n}</code></pre>"
+        },
+        {
+          "h": "Por que construtor?",
+          "html": "<ul><li>Dependência <strong>obrigatória</strong> fica explícita</li><li>Campo <code>final</code> → imutável após construção</li><li>Facilita <strong>testes</strong> (mock do JdbcTemplate)</li><li>Spring recomenda construtor sobre <code>@Autowired</code> em campo</li></ul>"
+        }
+      ]
+    },
+    "jdbc-datasource": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "DataSource",
+      "subtitle": "Pool de conexões com o banco",
+      "pills": [
+        "Pool",
+        "application.properties",
+        "HikariCP"
+      ],
+      "sections": [
+        {
+          "h": "O que é",
+          "html": "<p><code>DataSource</code> gerencia um <strong>pool de conexões</strong> com o banco. Em vez de abrir/fechar conexão a cada request, reutiliza conexões existentes — muito mais rápido.</p>"
+        },
+        {
+          "h": "Configuração típica",
+          "html": "<pre><code># application.properties\nspring.datasource.url=jdbc:postgresql://localhost:5432/anime_db\nspring.datasource.username=postgres\nspring.datasource.password=senha\nspring.datasource.driver-class-name=org.postgresql.Driver</code></pre>"
+        },
+        {
+          "h": "Fluxo",
+          "html": "<div class=\"diagram\"><pre>Controller → JdbcTemplate → DataSource (pool) → Banco PostgreSQL</pre></div>"
+        }
+      ]
+    },
+    "jdbc-anime-entity": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "Classe Entidade — Anime",
+      "subtitle": "Objeto Java que representa uma linha da tabela",
+      "pills": [
+        "UUID",
+        "Getters/Setters",
+        "BeanPropertyRowMapper"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>public class Anime {\n    private UUID id;\n    private String titulo;\n    private String autor;\n    // getters e setters\n}</code></pre>"
+        },
+        {
+          "h": "Mapeamento coluna → atributo",
+          "html": "<p><code>BeanPropertyRowMapper</code> converte cada linha do ResultSet em objeto Java:</p><table><thead><tr><th>Coluna SQL</th><th>Atributo Java</th></tr></thead><tbody><tr><td><code>id</code></td><td><code>getId()</code> / <code>setId()</code></td></tr><tr><td><code>titulo</code></td><td><code>getTitulo()</code> / <code>setTitulo()</code></td></tr><tr><td><code>autor</code></td><td><code>getAutor()</code> / <code>setAutor()</code></td></tr></tbody></table><div class=\"alert warn\">Nomes devem <strong>corresponder</strong> (camelCase Java ↔ snake_case SQL depende do banco).</div>"
+        }
+      ]
+    },
+    "jdbc-listar": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "LISTAR — query()",
+      "subtitle": "Buscar várias linhas e retornar List",
+      "pills": [
+        "GET /animes",
+        "200 OK",
+        "Lista vazia OK"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>@GetMapping\npublic ResponseEntity&lt;List&lt;Anime&gt;&gt; listar() {\n    String sql = \"SELECT * FROM anime\";\n\n    List&lt;Anime&gt; animes = template.query(\n            sql,\n            new BeanPropertyRowMapper&lt;&gt;(Anime.class)\n    );\n\n    return ResponseEntity.ok(animes);\n}</code></pre>"
+        },
+        {
+          "h": "Pontos-chave",
+          "html": "<table><thead><tr><th>Ponto</th><th>Detalhe</th></tr></thead><tbody><tr><td>Método</td><td><code>template.query()</code></td></tr><tr><td>Retorno</td><td><code>List&lt;Anime&gt;</code> — lista vazia se zero registros</td></tr><tr><td>Exceção?</td><td><strong>Não</strong> lança exceção por lista vazia</td></tr><tr><td>RowMapper</td><td><code>BeanPropertyRowMapper&lt;&gt;</code> converte linhas</td></tr><tr><td>HTTP</td><td><strong>200 OK</strong> mesmo com lista vazia</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "jdbc-cadastrar": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "CADASTRAR — update() + KeyHolder",
+      "subtitle": "INSERT com retorno do ID gerado",
+      "pills": [
+        "POST",
+        "201 Created",
+        "PreparedStatement"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>@PostMapping\npublic ResponseEntity&lt;Anime&gt; cadastrar(@RequestBody Anime anime) {\n    String sql = \"\"\"\n            INSERT INTO anime (titulo, autor)\n            VALUES (?, ?)\n            \"\"\";\n\n    KeyHolder keyHolder = new GeneratedKeyHolder();\n\n    template.update(connection -&gt; {\n        PreparedStatement stmt = connection.prepareStatement(\n                sql, Statement.RETURN_GENERATED_KEYS);\n        stmt.setString(1, anime.getTitulo());\n        stmt.setString(2, anime.getAutor());\n        return stmt;\n    }, keyHolder);\n\n    UUID idGerado = keyHolder.getKeyAs(UUID.class);\n    anime.setId(idGerado);\n\n    return ResponseEntity.status(201).body(anime);\n}</code></pre>"
+        },
+        {
+          "h": "Pontos-chave",
+          "html": "<table><thead><tr><th>Ponto</th><th>Detalhe</th></tr></thead><tbody><tr><td><code>?</code></td><td>Parâmetros posicionais — previne SQL Injection</td></tr><tr><td>KeyHolder</td><td>Recupera chave gerada após INSERT</td></tr><tr><td>RETURN_GENERATED_KEYS</td><td>Solicita chaves auto-geradas ao JDBC</td></tr><tr><td>Status</td><td><strong>201 Created</strong></td></tr></tbody></table>"
+        }
+      ]
+    },
+    "jdbc-buscar": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "BUSCAR POR ID — queryForObject()",
+      "subtitle": "Uma linha ou exceção se não encontrar",
+      "pills": [
+        "GET /{id}",
+        "404",
+        "EmptyResultDataAccessException"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>@GetMapping(\"/{id}\")\npublic ResponseEntity&lt;Anime&gt; buscarPorId(@PathVariable UUID id) {\n    try {\n        String sql = \"SELECT * FROM anime WHERE id = ?\";\n\n        Anime anime = template.queryForObject(\n                sql,\n                new BeanPropertyRowMapper&lt;&gt;(Anime.class),\n                id\n        );\n\n        return ResponseEntity.ok(anime);\n\n    } catch (EmptyResultDataAccessException e) {\n        return ResponseEntity.notFound().build(); // 404\n    }\n}</code></pre>"
+        },
+        {
+          "h": "Comportamentos",
+          "html": "<table><thead><tr><th>Resultado</th><th>O que acontece</th></tr></thead><tbody><tr><td>1 registro</td><td>Retorna o objeto → <strong>200</strong></td></tr><tr><td>0 registros</td><td>Lança <code>EmptyResultDataAccessException</code> → tratar → <strong>404</strong></td></tr><tr><td>2+ registros</td><td>Lança <code>IncorrectResultSizeDataAccessException</code></td></tr></tbody></table>"
+        },
+        {
+          "h": "Armadilha",
+          "html": "<div class=\"alert err\"><strong>Nunca</strong> use <code>catch (RuntimeException e)</code> — esconde erros reais de SQL/conexão!</div>"
+        }
+      ]
+    },
+    "jdbc-atualizar": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "ATUALIZAR — update()",
+      "subtitle": "UPDATE com verificação de existência",
+      "pills": [
+        "PUT /{id}",
+        "200 OK",
+        "404 se não existe"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>@PutMapping(\"/{id}\")\npublic ResponseEntity&lt;Anime&gt; atualizar(\n        @RequestBody Anime anime, @PathVariable UUID id) {\n    if (!existePorId(id)) {\n        return ResponseEntity.notFound().build();\n    }\n\n    String sql = \"\"\"\n            UPDATE anime SET titulo = ?, autor = ? WHERE id = ?\n            \"\"\";\n\n    template.update(sql, anime.getTitulo(), anime.getAutor(), id);\n\n    anime.setId(id); // ID vem da URL, não do body\n    return ResponseEntity.ok(anime);\n}</code></pre>"
+        },
+        {
+          "h": "Pontos-chave",
+          "html": "<ul><li><code>update()</code> retorna <code>int</code> — linhas afetadas</li><li>Verificar existência <strong>antes</strong> de atualizar</li><li>ID na resposta vem do <code>@PathVariable</code>, não do body</li></ul>"
+        }
+      ]
+    },
+    "jdbc-remover": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "REMOVER — update() + 204",
+      "subtitle": "DELETE sem corpo na resposta",
+      "pills": [
+        "DELETE /{id}",
+        "204 No Content",
+        "Void"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>@DeleteMapping(\"/{id}\")\npublic ResponseEntity&lt;Void&gt; remover(@PathVariable UUID id) {\n    if (!existePorId(id)) {\n        return ResponseEntity.notFound().build();\n    }\n\n    String sql = \"DELETE FROM anime WHERE id = ?\";\n    template.update(sql, id);\n\n    return ResponseEntity.noContent().build(); // 204\n}</code></pre>"
+        },
+        {
+          "h": "Pontos-chave",
+          "html": "<div class=\"alert ok\"><strong>204 No Content</strong> — sucesso sem corpo. Tipo retorno: <code>ResponseEntity&lt;Void&gt;</code>.</div><div class=\"alert warn\">DELETE também usa <code>template.update()</code> — não existe método <code>delete()</code> no JdbcTemplate!</div>"
+        }
+      ]
+    },
+    "jdbc-existe": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "VERIFICAR EXISTÊNCIA — COUNT(*)",
+      "subtitle": "queryForObject com tipo simples",
+      "pills": [
+        "Integer.class",
+        "COUNT",
+        "Prova"
+      ],
+      "sections": [
+        {
+          "h": "Código",
+          "html": "<pre><code>private boolean existePorId(UUID id) {\n    String sql = \"SELECT COUNT(*) FROM anime WHERE id = ?\";\n\n    Integer quantidade = template.queryForObject(\n            sql,\n            Integer.class,  // tipo simples!\n            id\n    );\n\n    return quantidade != null &amp;&amp; quantidade &gt; 0;\n}</code></pre>"
+        },
+        {
+          "h": "Regras",
+          "html": "<table><thead><tr><th>Regra</th><th>Detalhe</th></tr></thead><tbody><tr><td>COUNT(*)</td><td><strong>Sempre</strong> retorna uma linha (0 ou mais)</td></tr><tr><td>Exceção?</td><td><strong>Nunca</strong> lança por \"não encontrado\"</td></tr><tr><td>Tipo correto</td><td><code>Integer.class</code> diretamente</td></tr><tr><td><strong>ERRADO</strong></td><td><code>new BeanPropertyRowMapper&lt;&gt;(Integer.class)</code></td></tr></tbody></table>"
+        }
+      ]
+    },
+    "jdbc-rowmapper": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "BeanPropertyRowMapper",
+      "subtitle": "Converter linhas SQL em objetos Java",
+      "pills": [
+        "Anime.class",
+        "Mapeamento automático"
+      ],
+      "sections": [
+        {
+          "h": "Como funciona",
+          "html": "<p>Para cada linha do ResultSet, o mapper:</p><ol><li>Lê nome da coluna (ex: <code>titulo</code>)</li><li>Busca setter correspondente (<code>setTitulo</code>)</li><li>Converte tipo e preenche o objeto</li></ol><pre><code>new BeanPropertyRowMapper&lt;&gt;(Anime.class)</code></pre>"
+        },
+        {
+          "h": "Requisitos",
+          "html": "<ul><li>Classe com construtor padrão (sem args)</li><li>Getters e setters para cada coluna</li><li>Nomes compatíveis coluna ↔ atributo</li></ul>"
+        }
+      ]
+    },
+    "jdbc-mapper-rules": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "Regras do Mapper — Quando Usar",
+      "subtitle": "BeanPropertyRowMapper vs Integer.class",
+      "pills": [
+        "Prova",
+        "Escolha correta"
+      ],
+      "sections": [
+        {
+          "h": "Tabela decisão",
+          "html": "<table><thead><tr><th>Situação</th><th>✅ Correto</th><th>❌ Incorreto</th></tr></thead><tbody><tr><td>Mapear para objeto Anime</td><td><code>BeanPropertyRowMapper&lt;&gt;(Anime.class)</code></td><td>—</td></tr><tr><td>Valor escalar (COUNT)</td><td><code>Integer.class</code></td><td><code>BeanPropertyRowMapper&lt;Integer&gt;</code></td></tr><tr><td>Várias linhas → objetos</td><td><code>query()</code> + RowMapper</td><td><code>queryForObject()</code></td></tr><tr><td>Uma linha → objeto</td><td><code>queryForObject()</code> + RowMapper</td><td><code>query().get(0)</code></td></tr></tbody></table>"
+        }
+      ]
+    },
+    "jdbc-sql-injection": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "SQL Injection",
+      "subtitle": "Por que usar ? em vez de concatenar strings",
+      "pills": [
+        "Segurança",
+        "PreparedStatement",
+        "Prova"
+      ],
+      "sections": [
+        {
+          "h": "Perigoso — NUNCA faça",
+          "html": "<pre><code>// PERIGOSO:\nString sql = \"SELECT * FROM anime WHERE titulo = '\" + titulo + \"'\";</code></pre><p>Atacante pode enviar: <code>'; DROP TABLE anime; --</code></p>"
+        },
+        {
+          "h": "Seguro — sempre use ?",
+          "html": "<pre><code>String sql = \"SELECT * FROM anime WHERE titulo = ?\";\ntemplate.queryForObject(sql, mapper, titulo);</code></pre><div class=\"alert ok\">O <code>?</code> é substituído de forma segura pelo PreparedStatement. O valor nunca é interpretado como SQL.</div>"
+        }
+      ]
+    },
+    "jdbc-keyholder": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "KeyHolder — ID Gerado",
+      "subtitle": "Recuperar chave primária após INSERT",
+      "pills": [
+        "GeneratedKeyHolder",
+        "RETURN_GENERATED_KEYS",
+        "UUID"
+      ],
+      "sections": [
+        {
+          "h": "Fluxo",
+          "html": "<ol><li>Criar <code>KeyHolder keyHolder = new GeneratedKeyHolder()</code></li><li>Passar <code>Statement.RETURN_GENERATED_KEYS</code> no prepareStatement</li><li>Executar <code>template.update(..., keyHolder)</code></li><li>Ler: <code>keyHolder.getKeyAs(UUID.class)</code></li></ol>"
+        },
+        {
+          "h": "Alternativa",
+          "html": "<p>Gerar UUID na aplicação com <code>UUID.randomUUID()</code> antes do INSERT — não precisa de KeyHolder neste caso.</p>"
+        }
+      ]
+    },
+    "jdbc-exceptions": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "Exceções JDBC",
+      "subtitle": "Quais capturar e quais não capturar",
+      "pills": [
+        "EmptyResultDataAccessException",
+        "RuntimeException"
+      ],
+      "sections": [
+        {
+          "h": "Exceções importantes",
+          "html": "<table><thead><tr><th>Exceção</th><th>Quando ocorre</th><th>Ação</th></tr></thead><tbody><tr><td><code>EmptyResultDataAccessException</code></td><td>queryForObject com 0 linhas</td><td>Capturar → retornar 404</td></tr><tr><td><code>IncorrectResultSizeDataAccessException</code></td><td>queryForObject com 2+ linhas</td><td>Bug no SQL — investigar</td></tr><tr><td><code>DataAccessException</code></td><td>Erro genérico de acesso</td><td>Log + 500</td></tr></tbody></table>"
+        },
+        {
+          "h": "Armadilha de prova",
+          "html": "<div class=\"alert err\"><code>catch (RuntimeException e)</code> captura TUDO — incluindo erros de conexão que deveriam ser 500, não 404!</div>"
+        }
+      ]
+    },
+    "jdbc-methods-summary": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "Resumo dos Métodos JdbcTemplate",
+      "subtitle": "Tabela de referência rápida",
+      "pills": [
+        "query",
+        "queryForObject",
+        "update"
+      ],
+      "sections": [
+        {
+          "h": "Tabela completa",
+          "html": "<table><thead><tr><th>Método</th><th>Finalidade</th><th>Retorno</th><th>Exceção comum</th></tr></thead><tbody><tr><td><code>query()</code></td><td>Várias linhas</td><td><code>List&lt;T&gt;</code></td><td>DataAccessException</td></tr><tr><td><code>queryForObject()</code></td><td>Uma linha/valor</td><td><code>T</code></td><td>EmptyResultDataAccessException</td></tr><tr><td><code>update()</code></td><td>INSERT/UPDATE/DELETE</td><td><code>int</code> (linhas)</td><td>DataAccessException</td></tr><tr><td><code>BeanPropertyRowMapper</code></td><td>Linha → objeto</td><td>Objeto preenchido</td><td>—</td></tr><tr><td><code>KeyHolder</code></td><td>Chave no INSERT</td><td>UUID, Long</td><td>Depende do driver</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "jdbc-annotations": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "Anotações Spring do Controller",
+      "subtitle": "O vocabulário do Spring Boot REST",
+      "pills": [
+        "@RestController",
+        "@GetMapping",
+        "@PathVariable"
+      ],
+      "sections": [
+        {
+          "h": "Tabela de anotações",
+          "html": "<table><thead><tr><th>Anotação</th><th>Função</th></tr></thead><tbody><tr><td><code>@RestController</code></td><td>Controller REST — serializa retorno em JSON</td></tr><tr><td><code>@RequestMapping(\"/animes\")</code></td><td>Prefixo base da URL</td></tr><tr><td><code>@GetMapping</code></td><td>Mapeia requisição GET</td></tr><tr><td><code>@PostMapping</code></td><td>Mapeia requisição POST</td></tr><tr><td><code>@PutMapping</code></td><td>Mapeia requisição PUT</td></tr><tr><td><code>@DeleteMapping</code></td><td>Mapeia requisição DELETE</td></tr><tr><td><code>@PathVariable</code></td><td>Captura variável da URL (<code>/{id}</code>)</td></tr><tr><td><code>@RequestBody</code></td><td>Deserializa JSON do corpo em objeto Java</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "jdbc-rest-flow": {
+      "tag": "jdbc",
+      "tagLabel": "JDBC",
+      "title": "Fluxo REST + JDBC Completo",
+      "subtitle": "Da requisição HTTP ao banco e de volta",
+      "pills": [
+        "POST /animes",
+        "201 Created",
+        "Diagrama"
+      ],
+      "sections": [
+        {
+          "h": "Diagrama de sequência",
+          "html": "<div class=\"diagram\"><pre>Cliente                    Controller                  JdbcTemplate              Banco\n   │                           │                            │                       │\n   │ POST /animes + JSON       │                            │                       │\n   │──────────────────────────►│                            │                       │\n   │                           │ template.update(INSERT)    │                       │\n   │                           │───────────────────────────►│  PreparedStatement    │\n   │                           │                            │──────────────────────►│\n   │                           │                            │◄──────────────────────│\n   │                           │◄───────────────────────────│  KeyHolder (UUID)     │\n   │ 201 Created + JSON        │                            │                       │\n   │◄──────────────────────────│                            │                       │</pre></div>"
+        },
+        {
+          "h": "Passo a passo",
+          "html": "<ol><li>Cliente envia POST com JSON</li><li>Spring deserializa JSON → objeto Anime (<code>@RequestBody</code>)</li><li>Controller executa INSERT via JdbcTemplate</li><li>Banco gera UUID e confirma</li><li>KeyHolder captura o ID</li><li>Controller retorna 201 + JSON com anime completo</li></ol>"
+        }
+      ]
+    },
+    "jdbc-exam-traps": {
+      "tag": "warn",
+      "tagLabel": "Armadilhas",
+      "title": "Armadilhas de Prova — JDBC",
+      "subtitle": "Erros clássicos que caem na prova",
+      "pills": [
+        "Prova",
+        "COUNT",
+        "204",
+        "404"
+      ],
+      "sections": [
+        {
+          "h": "Top armadilhas",
+          "html": "<div class=\"alert err\"><strong>1.</strong> Usar BeanPropertyRowMapper para COUNT → use <code>Integer.class</code></div><div class=\"alert err\"><strong>2.</strong> Lista vazia no listar lança exceção → <strong>NÃO</strong> lança, retorna lista vazia</div><div class=\"alert err\"><strong>3.</strong> DELETE retorna 200 com corpo → correto é <strong>204</strong> sem corpo</div><div class=\"alert err\"><strong>4.</strong> catch(RuntimeException) no buscarPorId → esconde erros reais</div><div class=\"alert err\"><strong>5.</strong> Existe método delete() no JdbcTemplate → <strong>NÃO</strong>, use update()</div><div class=\"alert err\"><strong>6.</strong> queryForObject com 0 linhas retorna null → lança <strong>EmptyResultDataAccessException</strong></div>"
+        }
+      ]
+    },
+    "react-intro": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Introdução ao React",
+      "subtitle": "Biblioteca JavaScript para interfaces de usuário",
+      "pills": [
+        "Componentes",
+        "Declarativo",
+        "Virtual DOM"
+      ],
+      "sections": [
+        {
+          "h": "O que é React?",
+          "html": "<p><strong>React</strong> é uma biblioteca JavaScript criada pelo Facebook/Meta para construir <strong>interfaces de usuário</strong> (telas, botões, formulários) de forma modular e reutilizável.</p>"
+        },
+        {
+          "h": "Conceitos centrais",
+          "html": "<ul><li><strong>Componentes</strong> — pedaços reutilizáveis de UI</li><li><strong>JSX</strong> — HTML dentro do JavaScript</li><li><strong>Props</strong> — dados passados de pai para filho</li><li><strong>Estado (State)</strong> — memória reativa do componente</li><li><strong>Virtual DOM</strong> — React atualiza só o que mudou na tela</li></ul>"
+        },
+        {
+          "h": "Por que React?",
+          "html": "<p>Componentes reutilizáveis, atualização eficiente da tela quando dados mudam, ecossistema enorme (Create React App, Vite, Next.js).</p>"
+        }
+      ]
+    },
+    "react-jsx": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "JSX — Sintaxe",
+      "subtitle": "HTML dentro do JavaScript",
+      "pills": [
+        "Extensão de sintaxe",
+        "Chaves {}",
+        "Babel"
+      ],
+      "sections": [
+        {
+          "h": "O que é JSX",
+          "html": "<p><strong>JSX</strong> é uma extensão de sintaxe que permite escrever código <strong>parecido com HTML</strong> dentro do JavaScript.</p><pre><code>function Saudacao() {\n  const nome = \"Maria\";\n  return &lt;h1&gt;Olá, {nome}!&lt;/h1&gt;;\n}</code></pre>"
+        },
+        {
+          "h": "Chaves {} — expressões JavaScript",
+          "html": "<p>Dentro do JSX, <code>{}</code> permite inserir qualquer <strong>expressão JavaScript</strong>:</p><pre><code>&lt;p&gt;Idade: {idade}&lt;/p&gt;\n&lt;p&gt;Próximo ano: {idade + 1}&lt;/p&gt;\n&lt;p&gt;{ativo ? \"Online\" : \"Offline\"}&lt;/p&gt;</code></pre>"
+        },
+        {
+          "h": "Compilação",
+          "html": "<div class=\"alert ok\">JSX <strong>não roda direto</strong> no navegador. Ferramentas como <strong>Babel</strong> compilam JSX para <code>React.createElement(...)</code> antes da execução.</div>"
+        }
+      ]
+    },
+    "react-jsx-rules": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Regras do JSX",
+      "subtitle": "Verdadeiro ou falso — o que cai na prova",
+      "pills": [
+        "className",
+        "Elemento raiz",
+        "Fragment"
+      ],
+      "sections": [
+        {
+          "h": "Afirmações — gabarito",
+          "html": "<table><thead><tr><th>#</th><th>Afirmação</th><th>V/F</th></tr></thead><tbody><tr><td>I</td><td>JSX é extensão de sintaxe com HTML no JS</td><td>✅ V</td></tr><tr><td>II</td><td>Chaves {} inserem expressões JavaScript</td><td>✅ V</td></tr><tr><td>III</td><td>Dois elementos precisam de raiz ou Fragment</td><td>✅ V</td></tr><tr><td>IV</td><td>JSX é compilado por Babel</td><td>✅ V</td></tr><tr><td>V</td><td>Pode usar <code>class</code> no JSX como HTML</td><td>❌ F — use <code>className</code></td></tr></tbody></table>"
+        },
+        {
+          "h": "Outras regras",
+          "html": "<ul><li>Um componente retorna <strong>um elemento raiz</strong> (ou Fragment)</li><li><code>class</code> → <code>className</code></li><li><code>for</code> → <code>htmlFor</code></li><li>Tags devem fechar: <code>&lt;img /&gt;</code>, <code>&lt;br /&gt;</code></li><li>Atributos em camelCase: <code>onClick</code>, <code>tabIndex</code></li></ul>"
+        }
+      ]
+    },
+    "react-components": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Componentes",
+      "subtitle": "Funções JavaScript que retornam JSX",
+      "pills": [
+        "Maiúscula",
+        "Reutilizável",
+        "Hierarquia"
+      ],
+      "sections": [
+        {
+          "h": "Definição",
+          "html": "<pre><code>function Titulo() {\n  return &lt;h1&gt;Meu App&lt;/h1&gt;;\n}</code></pre><p>Um componente React é uma <strong>função JavaScript que retorna JSX</strong> e pode ser reutilizada.</p>"
+        },
+        {
+          "h": "Regras — gabarito prova",
+          "html": "<table><thead><tr><th>#</th><th>Afirmação</th><th>V/F</th></tr></thead><tbody><tr><td>I</td><td>Componente é função JS que retorna JSX</td><td>✅ V</td></tr><tr><td>II</td><td>Nome deve começar com maiúscula</td><td>✅ V</td></tr><tr><td>III</td><td>Pode ser reutilizado várias vezes</td><td>✅ V</td></tr><tr><td>IV</td><td>Pode importar e renderizar outros componentes</td><td>✅ V</td></tr><tr><td>V</td><td>Arquivo deve ter mesmo nome da função</td><td>❌ F — não é obrigatório</td></tr></tbody></table>"
+        },
+        {
+          "h": "Instâncias independentes",
+          "html": "<p><code>&lt;Titulo /&gt;</code> renderizado duas vezes cria <strong>duas instâncias independentes</strong> — cada uma com seu próprio estado (se houver).</p>"
+        }
+      ]
+    },
+    "react-import-export": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Import e Export Default",
+      "subtitle": "Organizar componentes em arquivos",
+      "pills": [
+        "export default",
+        "import",
+        "Sem chaves"
+      ],
+      "sections": [
+        {
+          "h": "Exemplo App.jsx",
+          "html": "<pre><code>import Titulo from \"./componentes/Titulo\";\n\nfunction App() {\n  return (\n    &lt;div&gt;\n      &lt;Titulo /&gt;\n      &lt;Titulo /&gt;\n    &lt;/div&gt;\n  );\n}\n\nexport default App;</code></pre>"
+        },
+        {
+          "h": "Regras do export default",
+          "html": "<ul><li><code>export default</code> → import <strong>sem chaves</strong> <code>{}</code></li><li>Pode <strong>renomear</strong> no import: <code>import MeuTitulo from \"./Titulo\"</code></li><li>Import é <strong>obrigatório</strong> para usar componente de outro arquivo</li><li><code>&lt;Titulo /&gt;</code> — maiúscula obrigatória para React reconhecer como componente</li></ul>"
+        }
+      ]
+    },
+    "react-props-destructure": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Props — Desestruturação",
+      "subtitle": "Receber dados do componente pai",
+      "pills": [
+        "{ nome, curso }",
+        "CardPerfil"
+      ],
+      "sections": [
+        {
+          "h": "Exemplo CardPerfil",
+          "html": "<pre><code>function CardPerfil({ nome, curso }) {\n  return (\n    &lt;div&gt;\n      &lt;h3&gt;{nome}&lt;/h3&gt;\n      &lt;p&gt;Curso: {curso}&lt;/p&gt;\n    &lt;/div&gt;\n  );\n}\n\n// Uso:\n&lt;CardPerfil nome=\"Ana\" curso=\"Web\" /&gt;</code></pre>"
+        },
+        {
+          "h": "Como funciona",
+          "html": "<p>Props são passadas como <strong>atributos HTML</strong>. A desestruturação <code>{ nome, curso }</code> extrai os valores do objeto props automaticamente.</p><p>Equivalente sem desestruturar: <code>function CardPerfil(props) { return &lt;h3&gt;{props.nome}&lt;/h3&gt;; }</code></p>"
+        }
+      ]
+    },
+    "react-props-rules": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Regras das Props",
+      "subtitle": "Imutáveis, tipos e valores padrão",
+      "pills": [
+        "Imutável",
+        "undefined",
+        "Prova"
+      ],
+      "sections": [
+        {
+          "h": "Gabarito prova",
+          "html": "<table><thead><tr><th>#</th><th>Afirmação</th><th>V/F</th></tr></thead><tbody><tr><td>I</td><td>Props são passadas de pai para filho</td><td>✅ V</td></tr><tr><td>II</td><td>Props são imutáveis no filho</td><td>✅ V</td></tr><tr><td>III</td><td>Podem ser string, número, boolean, função etc.</td><td>✅ V</td></tr><tr><td>IV</td><td>Prop não passada vale null</td><td>❌ F — vale <strong>undefined</strong></td></tr><tr><td>V</td><td>Props passadas pelo construtor</td><td>❌ F — passadas pelo <strong>JSX</strong></td></tr></tbody></table>"
+        },
+        {
+          "h": "Exemplo soma com props",
+          "html": "<pre><code>function Soma({ a, b }) {\n  return &lt;p&gt;Resultado: {a + b}&lt;/p&gt;;\n}\n\n&lt;Soma a={10} b={5} /&gt;  →  \"Resultado: 15\"</code></pre>"
+        }
+      ]
+    },
+    "react-children": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Children — Conteúdo Aninhado",
+      "subtitle": "O que fica entre as tags do componente",
+      "pills": [
+        "children",
+        "Composição"
+      ],
+      "sections": [
+        {
+          "h": "Exemplo Caixa",
+          "html": "<pre><code>function Caixa({ cor, children }) {\n  return (\n    &lt;div style={{ backgroundColor: cor }}&gt;\n      {children}\n    &lt;/div&gt;\n  );\n}\n\n&lt;Caixa cor=\"yellow\"&gt;\n  &lt;p&gt;Olá mundo!&lt;/p&gt;\n&lt;/Caixa&gt;</code></pre>"
+        },
+        {
+          "h": "Resultado",
+          "html": "<div class=\"alert ok\">Renderiza um <strong>div amarelo</strong> contendo o texto \"Olá mundo!\". <code>children</code> recebe tudo que está <em>dentro</em> das tags do componente.</div>"
+        }
+      ]
+    },
+    "react-state": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Estado (State)",
+      "subtitle": "A memória reativa do componente",
+      "pills": [
+        "Memória",
+        "Re-render",
+        "Independente"
+      ],
+      "sections": [
+        {
+          "h": "Conceito",
+          "html": "<p><strong>Estado</strong> é a \"memória\" do componente. Quando muda, o React <strong>re-renderiza</strong> automaticamente a tela.</p>"
+        },
+        {
+          "h": "Gabarito prova",
+          "html": "<table><thead><tr><th>#</th><th>Afirmação</th><th>V/F</th></tr></thead><tbody><tr><td>I</td><td>Estado é a memória do componente</td><td>✅ V</td></tr><tr><td>II</td><td>Cada useState cria caixa independente</td><td>✅ V</td></tr><tr><td>III</td><td>Dois componentes com useState(0) compartilham estado</td><td>❌ F — cada um tem o seu</td></tr><tr><td>IV</td><td>Só o setter informa React para redesenhar</td><td>✅ V</td></tr><tr><td>V</td><td>Estado pode ser string, número, array, objeto</td><td>✅ V</td></tr></tbody></table>"
+        },
+        {
+          "h": "Props vs State",
+          "html": "<div class=\"compare\"><div class=\"compare-box\"><h4>Props</h4><p>Vêm de <strong>fora</strong> (pai). Imutáveis no filho.</p></div><div class=\"compare-box\"><h4>State</h4><p>Gerenciado <strong>dentro</strong> do componente. Mutável via setter.</p></div></div>"
+        }
+      ]
+    },
+    "react-usestate": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "useState — Hook de Estado",
+      "subtitle": "Como declarar e atualizar estado",
+      "pills": [
+        "useState(0)",
+        "setter",
+        "Re-render"
+      ],
+      "sections": [
+        {
+          "h": "Sintaxe",
+          "html": "<pre><code>import { useState } from \"react\";\n\nfunction Contador() {\n  const [cont, setCont] = useState(0);\n\n  return (\n    &lt;div&gt;\n      &lt;p&gt;Valor: {cont}&lt;/p&gt;\n      &lt;button onClick={() =&gt; setCont(cont + 1)}&gt;\n        +1\n      &lt;/button&gt;\n    &lt;/div&gt;\n  );\n}</code></pre>"
+        },
+        {
+          "h": "Gabarito prova",
+          "html": "<table><thead><tr><th>#</th><th>Afirmação</th><th>V/F</th></tr></thead><tbody><tr><td>I</td><td>useState(0) inicializa cont com 0</td><td>✅ V</td></tr><tr><td>II</td><td>setCont atualiza e dispara re-render</td><td>✅ V</td></tr><tr><td>III</td><td>Ao clicar, cont vira 1 e JSX reavalia</td><td>✅ V</td></tr><tr><td>IV</td><td>cont = cont + 1 redesenha a tela</td><td>❌ F — precisa do <strong>setter</strong></td></tr></tbody></table>"
+        },
+        {
+          "h": "Regra de ouro",
+          "html": "<div class=\"alert warn\"><strong>Nunca</strong> altere state diretamente (<code>cont = 5</code>). Sempre use o setter (<code>setCont(5)</code>).</div>"
+        }
+      ]
+    },
+    "react-events": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Eventos — onClick",
+      "subtitle": "Responder a ações do usuário",
+      "pills": [
+        "onClick",
+        "camelCase",
+        "Handler"
+      ],
+      "sections": [
+        {
+          "h": "Exemplo BotaoClick",
+          "html": "<pre><code>function BotaoClick() {\n  const [msg, setMsg] = useState(\"Clique aqui\");\n\n  return (\n    &lt;button onClick={() =&gt; setMsg(\"Clicou!\")}&gt;\n      {msg}\n    &lt;/button&gt;\n  );\n}</code></pre>"
+        },
+        {
+          "h": "Regras",
+          "html": "<ul><li>Eventos em <strong>camelCase</strong>: <code>onClick</code>, <code>onChange</code>, <code>onSubmit</code></li><li>Valor é uma <strong>função</strong>, não string: <code>onClick={handler}</code></li><li>Arrow function comum: <code>onClick={() =&gt; setMsg(\"...\")}</code></li><li>Passar referência: <code>onClick={handleClick}</code> (sem parênteses)</li></ul>"
+        }
+      ]
+    },
+    "react-conditional": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Renderização Condicional",
+      "subtitle": "Mostrar conteúdo diferente conforme condição",
+      "pills": [
+        "Ternário",
+        "&&",
+        "StatusLogin"
+      ],
+      "sections": [
+        {
+          "h": "Operador ternário",
+          "html": "<pre><code>function StatusLogin({ logado }) {\n  return (\n    &lt;div&gt;\n      {logado ? (\n        &lt;p&gt;Bem-vindo de volta!&lt;/p&gt;\n      ) : (\n        &lt;p&gt;Faça login para continuar.&lt;/p&gt;\n      )}\n    &lt;/div&gt;\n  );\n}\n\n&lt;StatusLogin logado={false} /&gt;\n→ \"Faça login para continuar.\"</code></pre>"
+        },
+        {
+          "h": "Operador &&",
+          "html": "<pre><code>{logado &amp;&amp; &lt;p&gt;Bem-vindo!&lt;/p&gt;}</code></pre><p>Renderiza o elemento <strong>só se</strong> a condição for verdadeira. Útil quando há apenas um caso \"sim\".</p>"
+        },
+        {
+          "h": "Gabarito prova",
+          "html": "<table><thead><tr><th>#</th><th>Afirmação</th><th>V/F</th></tr></thead><tbody><tr><td>I</td><td>Ternário ? : é renderização condicional</td><td>✅ V</td></tr><tr><td>II</td><td>logado=false → \"Faça login...\"</td><td>✅ V</td></tr><tr><td>III</td><td>Poderia usar && para um caso só</td><td>✅ V</td></tr><tr><td>IV</td><td>if/else direto dentro do JSX</td><td>❌ F — use ternário, && ou if fora do return</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "react-fragment": {
+      "tag": "react",
+      "tagLabel": "React",
+      "title": "Fragment",
+      "subtitle": "Agrupar elementos sem div extra",
+      "pills": [
+        "<> </>",
+        "Elemento invisível",
+        "DOM limpo"
+      ],
+      "sections": [
+        {
+          "h": "Problema",
+          "html": "<p>JSX exige <strong>um elemento raiz</strong>. Envolver em <code>&lt;div&gt;</code> adiciona nó extra no DOM — pode quebrar layout CSS.</p>"
+        },
+        {
+          "h": "Solução — Fragment",
+          "html": "<pre><code>function Lista() {\n  return (\n    &lt;&gt;\n      &lt;h1&gt;Título&lt;/h1&gt;\n      &lt;p&gt;Parágrafo&lt;/p&gt;\n    &lt;/&gt;\n  );\n}\n\n// Equivalente:\nimport { Fragment } from \"react\";\n&lt;Fragment&gt;...&lt;/Fragment&gt;</code></pre>"
+        },
+        {
+          "h": "Conceito",
+          "html": "<div class=\"alert ok\"><strong>Fragment</strong> agrupa filhos <strong>sem criar elemento</strong> no DOM — é invisível para o navegador.</div>"
+        }
+      ]
+    },
+    "react-exam-traps": {
+      "tag": "warn",
+      "tagLabel": "Armadilhas",
+      "title": "Armadilhas de Prova — React",
+      "subtitle": "Erros clássicos do simulado",
+      "pills": [
+        "className",
+        "undefined",
+        "setter"
+      ],
+      "sections": [
+        {
+          "h": "Top armadilhas",
+          "html": "<div class=\"alert err\"><strong>1.</strong> Usar <code>class</code> no JSX → use <code>className</code></div><div class=\"alert err\"><strong>2.</strong> Prop não passada = null → é <strong>undefined</strong></div><div class=\"alert err\"><strong>3.</strong> Alterar state diretamente → use o <strong>setter</strong></div><div class=\"alert err\"><strong>4.</strong> if/else dentro das chaves JSX → use ternário ou &&</div><div class=\"alert err\"><strong>5.</strong> Nome do arquivo = nome da função → <strong>não é obrigatório</strong></div><div class=\"alert err\"><strong>6.</strong> Dois componentes compartilham useState(0) → cada um tem estado <strong>independente</strong></div><div class=\"alert err\"><strong>7.</strong> JSX roda direto no navegador → precisa compilar com <strong>Babel</strong></div>"
+        },
+        {
+          "h": "Associações corretas",
+          "html": "<table><thead><tr><th>Conceito</th><th>Descrição</th></tr></thead><tbody><tr><td>Fragment</td><td>Agrupa filhos sem div extra no DOM</td></tr><tr><td>Estado</td><td>Memória reativa — muda → re-render</td></tr><tr><td>JSX</td><td>HTML dentro do JavaScript</td></tr><tr><td>Componente</td><td>Função JS que retorna JSX</td></tr><tr><td>Props</td><td>Valores do pai para o filho</td></tr></tbody></table>"
+        }
+      ]
+    },
+    "resumo-final": {
+      "tag": "root",
+      "tagLabel": "Resumo",
+      "title": "Resumo Final — Tabelas de Revisão",
+      "subtitle": "Tudo em um lugar para revisar antes da prova",
+      "pills": [
+        "HTTP",
+        "JDBC",
+        "React",
+        "59 tópicos"
+      ],
+      "sections": [
+        {
+          "h": "HTTP — Status na API Anime",
+          "html": "<table><thead><tr><th>Operação</th><th>Método</th><th>Sucesso</th><th>Não encontrado</th></tr></thead><tbody><tr><td>Listar</td><td>GET /animes</td><td>200</td><td>— (lista vazia)</td></tr><tr><td>Buscar</td><td>GET /animes/{id}</td><td>200</td><td>404</td></tr><tr><td>Criar</td><td>POST /animes</td><td>201</td><td>—</td></tr><tr><td>Atualizar</td><td>PUT /animes/{id}</td><td>200</td><td>404</td></tr><tr><td>Remover</td><td>DELETE /animes/{id}</td><td>204</td><td>404</td></tr></tbody></table>"
+        },
+        {
+          "h": "HTTP — Métodos",
+          "html": "<table><thead><tr><th>Método</th><th>Seguro</th><th>Idempotente</th><th>Uso</th></tr></thead><tbody><tr><td>GET</td><td>✅</td><td>✅</td><td>Ler</td></tr><tr><td>POST</td><td>❌</td><td>❌</td><td>Criar</td></tr><tr><td>PUT</td><td>❌</td><td>✅</td><td>Substituir</td></tr><tr><td>PATCH</td><td>❌</td><td>❌</td><td>Atualizar parcial</td></tr><tr><td>DELETE</td><td>❌</td><td>✅</td><td>Remover</td></tr></tbody></table>"
+        },
+        {
+          "h": "JDBC — Escolha do método",
+          "html": "<table><thead><tr><th>Preciso...</th><th>Uso</th></tr></thead><tbody><tr><td>Várias linhas como objetos</td><td><code>query()</code> + BeanPropertyRowMapper</td></tr><tr><td>Uma linha como objeto</td><td><code>queryForObject()</code> + BeanPropertyRowMapper</td></tr><tr><td>Valor simples (COUNT)</td><td><code>queryForObject()</code> + Integer.class</td></tr><tr><td>Inserir/atualizar/deletar</td><td><code>update()</code></td></tr><tr><td>ID gerado no INSERT</td><td>KeyHolder + RETURN_GENERATED_KEYS</td></tr></tbody></table>"
+        },
+        {
+          "h": "React — Conceitos-chave",
+          "html": "<table><thead><tr><th>Conceito</th><th>Regra principal</th></tr></thead><tbody><tr><td>JSX</td><td>className (não class); compilado por Babel</td></tr><tr><td>Componente</td><td>Função com maiúscula que retorna JSX</td></tr><tr><td>Props</td><td>Imutáveis; não passada = undefined</td></tr><tr><td>State</td><td>Só muda com setter; dispara re-render</td></tr><tr><td>Condicional</td><td>Ternário ? : ou && (não if/else no JSX)</td></tr><tr><td>Fragment</td><td>&lt;&gt; &lt;/&gt; agrupa sem div extra</td></tr></tbody></table>"
+        },
+        {
+          "h": "Boa prova!",
+          "html": "<div class=\"alert ok\">Revise os tópicos de <strong>Armadilhas de Prova</strong> em JDBC e React. Faça o quiz de 100 questões na pasta raiz do projeto!</div>"
+        }
+      ]
+    }
+  },
+  flatOrder: []
+};
+
+(function () {
+  function flatten(nodes, acc) {
+    acc = acc || [];
+    nodes.forEach(function (n) {
+      if (n.children && n.children.length) {
+        flatten(n.children, acc);
+      } else {
+        acc.push(n.id);
+      }
+    });
+    return acc;
+  }
+  window.STUDY.flatOrder = flatten(window.STUDY.TREE);
+})();
+
+
+const ANSWERS = {
+      1:"c",2:"b",3:"b",4:"c",5:"c",6:"c",7:"b",8:"c",9:"b",10:"b",
+      11:"c",12:"b",13:"b",14:"b",15:"b",16:"b",17:"b",18:"c",19:"b",20:"b",
+      21:"c",22:"b",23:"b",24:"b",25:"b",26:"b",27:"b",28:"b",29:"b",30:"b",
+      31:"b",32:"b",33:"c",34:"b",35:"b",36:"b",37:"b",38:"b",39:"b",40:"b",
+      41:"b",42:"b",43:"b",44:"b",45:"b",
+      46:"b",47:"b",48:"b",49:"b",50:"b",51:"b",52:"b",53:"a",54:"b",55:"b",
+      56:"b",57:"b",58:"b",59:"b",60:"b",61:"b",62:"b",63:"b",64:"b",65:"b",
+      66:"c",67:"b",68:"b",69:"a",70:"b",71:"b",72:"b",73:"b",74:"b",75:"b",
+      76:"b",77:"b",78:"b",79:"b",80:"b",
+      81:"b",82:"b",83:"c",84:"c",85:"b",86:"b",87:"b",88:"b",89:"b",90:"b",
+      91:"b",92:"b",93:"b",94:"b",95:"b",96:"b",97:"b",98:"b",99:"b",100:"a"
+    };
+
+    const QUESTIONS = [
+      { block: "http", blockTitle: "Bloco A — HTTP", showTitle: true,
+        text: "O protocolo HTTP opera principalmente em qual camada do modelo de rede?",
+        options: ["Física","Transporte","Aplicação","Enlace"] },
+      { block: "http", text: "No modelo cliente-servidor HTTP, quem inicia a comunicação?",
+        options: ["O servidor","O cliente","Ambos simultaneamente","O banco de dados"] },
+      { block: "http", text: "O que significa dizer que HTTP é stateless?",
+        options: ["O servidor não usa banco de dados","Cada requisição é independente e o servidor não guarda contexto entre elas","O cliente não envia cookies","A conexão TCP nunca é fechada"] },
+      { block: "http", text: "Qual parte da requisição HTTP contém o método, a URI e a versão do protocolo?",
+        options: ["Cabeçalhos","Corpo","Linha de requisição","Linha de status"] },
+      { block: "http", text: "Qual método HTTP é considerado <strong>seguro</strong> (não altera o estado do servidor)?",
+        options: ["POST","PUT","GET","DELETE"] },
+      { block: "http", text: "Qual método HTTP é <strong>idempotente</strong>?",
+        options: ["POST","PATCH","PUT","POST e PATCH"] },
+      { block: "http", text: "Qual status HTTP indica que um recurso foi criado com sucesso?",
+        options: ["200 OK","201 Created","204 No Content","202 Accepted"] },
+      { block: "http", text: "Qual status HTTP é o mais adequado para uma remoção bem-sucedida sem corpo na resposta?",
+        options: ["200 OK","201 Created","204 No Content","404 Not Found"] },
+      { block: "http", text: "Um cliente envia JSON malformado. Qual status é mais apropriado?",
+        options: ["404 Not Found","400 Bad Request","500 Internal Server Error","401 Unauthorized"] },
+      { block: "http", text: "O recurso <code>/animes/123</code> não existe no banco. Qual status retornar?",
+        options: ["400 Bad Request","404 Not Found","204 No Content","500 Internal Server Error"] },
+      { block: "http", text: "Qual cabeçalho indica o tipo de conteúdo do corpo da mensagem?",
+        options: ["Accept","Host","Content-Type","Authorization"] },
+      { block: "http", text: "Qual cabeçalho é usado para enviar um token JWT?",
+        options: ["Cookie","Authorization","Content-Length","Location"] },
+      { block: "http", text: "Qual a diferença principal entre HTTP e HTTPS?",
+        options: ["HTTPS usa porta 80","HTTPS adiciona criptografia TLS","HTTP é mais rápido porque criptografa","Não há diferença prática"] },
+      { block: "http", text: "Qual porta padrão utiliza HTTPS?",
+        options: ["80","443","8080","3306"] },
+      { block: "http", text: "Qual método HTTP retorna apenas os cabeçalhos, sem corpo na resposta?",
+        options: ["OPTIONS","HEAD","TRACE","CONNECT"] },
+      { block: "http", text: "O método OPTIONS é frequentemente usado para:",
+        options: ["Criar recursos","Verificação de CORS (preflight)","Autenticação","Cache de imagens"] },
+      { block: "http", text: "Em uma API REST, qual URL segue boas práticas?",
+        options: ["GET /getAnimes","GET /animes","POST /animes/listar","GET /anime/list"] },
+      { block: "http", text: "Qual verbo HTTP deve ser usado para <strong>atualizar parcialmente</strong> um recurso?",
+        options: ["PUT","POST","PATCH","GET"] },
+      { block: "http", text: "PUT é idempotente. Isso significa que:",
+        options: ["Pode ser executado sem autenticação","Executar várias vezes produz o mesmo efeito que executar uma vez","Sempre retorna 200","Não pode ter corpo na requisição"] },
+      { block: "http", text: "POST normalmente é usado para:",
+        options: ["Buscar dados","Criar novos recursos","Remover recursos","Verificar cabeçalhos"] },
+      { block: "http", text: "Qual classe de status (primeiro dígito) indica erro do <strong>cliente</strong>?",
+        options: ["2xx","3xx","4xx","5xx"] },
+      { block: "http", text: "Status 401 Unauthorized significa:",
+        options: ["O usuário não tem permissão para o recurso","O cliente não está autenticado","O recurso não foi encontrado","Erro interno do servidor"] },
+      { block: "http", text: "Status 403 Forbidden significa:",
+        options: ["Credenciais inválidas","Autenticado, mas sem permissão","Recurso não encontrado","Método HTTP inválido"] },
+      { block: "http", text: "Status 500 Internal Server Error indica:",
+        options: ["Erro de sintaxe no JSON enviado","Falha inesperada no servidor","Recurso não encontrado","Redirecionamento"] },
+      { block: "http", text: "Qual cabeçalho de resposta indica a URL de um recurso recém-criado?",
+        options: ["Set-Cookie","Location","ETag","Cache-Control"] },
+      { block: "http", text: "O cabeçalho <code>Accept: application/json</code> indica:",
+        options: ["O corpo enviado é JSON","O cliente prefere receber JSON","O servidor só aceita JSON","A resposta será criptografada"] },
+      { block: "http", text: "HTTP/1.1 usa qual protocolo de transporte?",
+        options: ["UDP","TCP","ICMP","FTP"] },
+      { block: "http", text: "Qual afirmação sobre GET é correta?",
+        options: ["GET deve sempre ter corpo","GET é seguro e idempotente","GET cria recursos","GET retorna sempre 201"] },
+      { block: "http", text: "DELETE bem-sucedido em REST geralmente retorna:",
+        options: ["200 com o objeto deletado","204 sem corpo","201 Created","404 Not Found"] },
+      { block: "http", text: "Status 304 Not Modified está relacionado a:",
+        options: ["Autenticação","Cache condicional","Criação de recurso","Erro de validação"] },
+      { block: "http", text: "Qual status indica redirecionamento permanente?",
+        options: ["302 Found","301 Moved Permanently","404 Not Found","503 Service Unavailable"] },
+      { block: "http", text: "Em REST, filtros como <code>?autor=Oda</code> são enviados via:",
+        options: ["Path variable","Query string","Request body","Cabeçalho Host"] },
+      { block: "http", text: "<code>@PathVariable</code> captura valores de:",
+        options: ["Query string","Corpo JSON","Segmento da URL","Cabeçalho Authorization"] },
+      { block: "http", text: "<code>@RequestBody</code> deserializa dados de:",
+        options: ["URL","Corpo da requisição","Cabeçalhos","Cookies"] },
+      { block: "http", text: "Qual combinação método + status é correta para cadastro?",
+        options: ["GET + 201","POST + 201","POST + 204","PUT + 201"] },
+      { block: "http", text: "Status 405 Method Not Allowed ocorre quando:",
+        options: ["O JSON está inválido","O verbo HTTP não é suportado na rota","O recurso não existe","O servidor está em manutenção"] },
+      { block: "http", text: "Stateless facilita:",
+        options: ["Manter sessão no servidor automaticamente","Escalar horizontalmente o servidor","Eliminar banco de dados","Usar apenas HTTPS"] },
+      { block: "http", text: "Qual é a ordem correta das partes de uma <strong>resposta</strong> HTTP?",
+        options: ["Corpo → Cabeçalhos → Linha de status","Linha de status → Cabeçalhos → Corpo","Cabeçalhos → Linha de status → Corpo","Linha de requisição → Corpo → Cabeçalhos"] },
+      { block: "http", text: "PATCH é tipicamente:",
+        options: ["Seguro e idempotente","Não seguro e pode não ser idempotente","Seguro mas não idempotente","Idempotente e seguro"] },
+      { block: "http", text: "Status 409 Conflict é usado quando:",
+        options: ["O servidor está offline","Há conflito com o estado atual (ex.: duplicata)","O token expirou","A URL mudou"] },
+      { block: "http", text: "Em produção, APIs devem usar preferencialmente:",
+        options: ["HTTP na porta 80","HTTPS na porta 443","FTP","HTTP sem cabeçalhos"] },
+      { block: "http", text: "O cabeçalho <code>Host</code> identifica:",
+        options: ["O IP do cliente","O domínio/porta do servidor destino","O tipo de conteúdo","A versão do Java"] },
+      { block: "http", text: "Qual status para GET que retorna um anime encontrado?",
+        options: ["201","200","204","404"] },
+      { block: "http", text: "Qual status para GET <code>/animes</code> quando a tabela está vazia?",
+        options: ["404","200 com lista vazia []","204","500"] },
+      { block: "http", text: "Boas práticas REST: substantivos nas URLs devem estar no:",
+        options: ["Singular sempre","Plural (/animes)","Infinitivo (/listar)","CamelCase"] },
+
+      { block: "jdbc", blockTitle: "Bloco B — JDBC e Spring", showTitle: true,
+        text: "O que é JdbcTemplate no Spring?",
+        options: ["Um ORM como Hibernate","Abstração que simplifica operações JDBC","Driver de banco de dados","Protocolo de rede"] },
+      { block: "jdbc", text: "Como o JdbcTemplate é obtido no controller?",
+        options: ["new JdbcTemplate() manualmente","Injeção de dependência pelo Spring","Herança de uma classe abstrata","Arquivo properties obrigatório"] },
+      { block: "jdbc", text: "Por que a injeção por construtor é recomendada?",
+        options: ["Porque é mais lenta","Torna dependências explícitas e facilita testes","Porque elimina SQL Injection","Porque substitui o banco de dados"] },
+      { block: "jdbc", text: "Qual método JdbcTemplate usar para consultar <strong>várias linhas</strong>?",
+        options: ["queryForObject","query","update","execute"] },
+      { block: "jdbc", text: "Qual método usar para consultar <strong>exatamente um</strong> registro como objeto?",
+        options: ["query","queryForObject","update","batchUpdate"] },
+      { block: "jdbc", text: "<code>query()</code> sem registros retorna:",
+        options: ["null","Lista vazia","EmptyResultDataAccessException","404 automaticamente"] },
+      { block: "jdbc", text: "<code>queryForObject()</code> sem registros lança:",
+        options: ["NullPointerException","EmptyResultDataAccessException","SQLException sempre","Retorna null"] },
+      { block: "jdbc", text: "BeanPropertyRowMapper serve para:",
+        options: ["Converter linhas do ResultSet em objetos Java","Criptografar senhas","Gerar SQL automaticamente","Validar JSON"] },
+      { block: "jdbc", text: "Para mapear coluna <code>titulo</code> ao atributo <code>titulo</code>, é necessário:",
+        options: ["Anotação @Column obrigatória","Nome da coluna corresponder ao atributo (convenção)","Usar XML externo sempre","BeanPropertyRowMapper não suporta isso"] },
+      { block: "jdbc", text: "Para obter COUNT(*) como Integer, o correto é:",
+        options: ["new BeanPropertyRowMapper<>(Integer.class)","template.queryForObject(sql, Integer.class, id)","template.query(sql, Integer.class)","template.update(sql, Integer.class)"] },
+      { block: "jdbc", text: "O método <code>update()</code> do JdbcTemplate retorna:",
+        options: ["O objeto inserido","Número de linhas afetadas","UUID gerado","Boolean"] },
+      { block: "jdbc", text: "<code>update()</code> é usado para:",
+        options: ["Apenas SELECT","INSERT, UPDATE e DELETE","Apenas INSERT","Apenas DELETE"] },
+      { block: "jdbc", text: "Os símbolos <code>?</code> em SQL representam:",
+        options: ["Comentários","Parâmetros posicionais","Wildcards de tabela","Chaves primárias"] },
+      { block: "jdbc", text: "Usar <code>?</code> em vez de concatenar strings previne:",
+        options: ["NullPointerException","SQL Injection","OutOfMemoryError","Deadlock"] },
+      { block: "jdbc", text: "KeyHolder é usado para:",
+        options: ["Criptografar chaves","Recuperar chave gerada após INSERT","Abrir conexão","Fazer rollback"] },
+      { block: "jdbc", text: "Para solicitar chaves geradas no PreparedStatement, usa-se:",
+        options: ["Statement.NO_GENERATED_KEYS","Statement.RETURN_GENERATED_KEYS","ResultSet.CONCUR_READ_ONLY","Connection.TRANSACTION_NONE"] },
+      { block: "jdbc", text: "Para ID numérico auto-increment, recupera-se com:",
+        options: ["keyHolder.getKeyAs(String.class)","keyHolder.getKeyAs(Long.class)","keyHolder.getKeys() apenas","template.queryForObject"] },
+      { block: "jdbc", text: "Alternativa ao KeyHolder para UUID:",
+        options: ["Integer.parseInt","UUID.randomUUID() na aplicação","Não existe alternativa","Usar GET em vez de POST"] },
+      { block: "jdbc", text: "EmptyResultDataAccessException deve ser capturada para retornar:",
+        options: ["500 Internal Server Error","404 Not Found","201 Created","204 No Content"] },
+      { block: "jdbc", text: "Capturar <code>RuntimeException</code> genericamente no buscarPorId é:",
+        options: ["Recomendado","Não recomendado — pode esconder erros reais","Obrigatório pelo Spring","Necessário para SQL Injection"] },
+      { block: "jdbc", text: "COUNT(*) quando o registro não existe retorna:",
+        options: ["Exceção","null","0","-1"] },
+      { block: "jdbc", text: "No PUT, o ID usado na atualização vem de:",
+        options: ["Apenas do body JSON","@PathVariable da URL","Cabeçalho Host","KeyHolder"] },
+      { block: "jdbc", text: "Antes de UPDATE ou DELETE, boa prática é:",
+        options: ["Executar direto sem verificar","Verificar se o recurso existe","Sempre retornar 201","Usar query() em vez de update()"] },
+      { block: "jdbc", text: "@RestController combina:",
+        options: ["@Controller + @ResponseBody","@Service + @Repository","@Entity + @Table","@Component + @Autowired em campo"] },
+      { block: "jdbc", text: "GeneratedKeyHolder é uma implementação de:",
+        options: ["JdbcTemplate","KeyHolder","DataSource","RowMapper"] },
+      { block: "jdbc", text: "queryForObject com 2+ registros lança exceção porque:",
+        options: ["O banco desliga","Esperava exatamente um resultado","BeanPropertyRowMapper falha sempre","É comportamento do GET HTTP"] },
+      { block: "jdbc", text: "setString(1, valor) no PreparedStatement define:",
+        options: ["Primeiro cabeçalho HTTP","Primeiro parâmetro ? da SQL","Chave primária","Nome da tabela"] },
+      { block: "jdbc", text: "ResponseEntity.status(201) é usado em:",
+        options: ["DELETE","POST cadastro","GET listagem","HEAD"] },
+      { block: "jdbc", text: "ResponseEntity.noContent() retorna status:",
+        options: ["200","204","404","201"] },
+      { block: "jdbc", text: "Qual anotação define o prefixo <code>/animes</code> para todas as rotas?",
+        options: ["@GetMapping(\"/animes\")","@RequestMapping(\"/animes\")","@PathVariable(\"/animes\")","@RequestBody(\"/animes\")"] },
+      { block: "jdbc", text: "DataSource no Spring Boot é configurado automaticamente quando:",
+        options: ["Não há banco","Há driver JDBC e configuração no application.properties/yml","Apenas com Hibernate","Nunca — sempre manual"] },
+      { block: "jdbc", text: "BeanPropertyRowMapper NÃO deve ser usado com:",
+        options: ["Anime.class","Integer.class","Objetos com getters/setters","Classes POJO"] },
+      { block: "jdbc", text: "template.update(sql, arg1, arg2, arg3) passa argumentos:",
+        options: ["Para cabeçalhos HTTP","Para os placeholders ? na ordem","Para o KeyHolder","Para o RowMapper"] },
+      { block: "jdbc", text: "PreparedStatement é preferido a Statement simples porque:",
+        options: ["É mais lento porém seguro","Suporta parâmetros e previne SQL Injection","Não precisa de conexão","Retorna List automaticamente"] },
+      { block: "jdbc", text: "O Spring gerencia conexões JDBC via JdbcTemplate. Isso significa:",
+        options: ["Desenvolvedor abre/fecha conexão manualmente sempre","Template obtém e libera conexões do pool automaticamente","Não usa pool de conexões","Substitui o banco por memória"] },
+
+      { block: "code", blockTitle: "Bloco C — Avaliação de Código", showTitle: true, isCode: true,
+        text: "Analise o código. Qual o problema?",
+        code: `List<Anime> animes = template.queryForObject(
+    "SELECT * FROM anime",
+    new BeanPropertyRowMapper<>(Anime.class)
+);`,
+        options: ["Nenhum — está correto","queryForObject espera um resultado; SELECT * sem WHERE pode retornar várias linhas","Deveria usar update()","BeanPropertyRowMapper não funciona com Anime"] },
+      { block: "code", isCode: true, text: "Analise o código. Qual o problema?",
+        code: `Integer total = template.queryForObject(
+    "SELECT COUNT(*) FROM anime WHERE id = ?",
+    new BeanPropertyRowMapper<>(Integer.class),
+    id
+);`,
+        options: ["Deveria usar query()","BeanPropertyRowMapper não deve ser usado para tipos simples como Integer","COUNT não funciona com JdbcTemplate","Falta KeyHolder"] },
+      { block: "code", isCode: true, text: "Se o id não existir, o que acontece?",
+        code: `@GetMapping("/{id}")
+public ResponseEntity<Anime> buscar(@PathVariable UUID id) {
+    Anime anime = template.queryForObject(
+        "SELECT * FROM anime WHERE id = ?",
+        new BeanPropertyRowMapper<>(Anime.class),
+        id
+    );
+    return ResponseEntity.ok(anime);
+}`,
+        options: ["Retorna 404 automaticamente","Retorna null com status 200","Lança EmptyResultDataAccessException — precisa tratar para 404","Retorna lista vazia"] },
+      { block: "code", isCode: true, text: "Qual melhoria de status HTTP?",
+        code: `@DeleteMapping("/{id}")
+public ResponseEntity<Void> remover(@PathVariable UUID id) {
+    template.update("DELETE FROM anime WHERE id = ?", id);
+    return ResponseEntity.ok(null);
+}`,
+        options: ["Manter 200 OK","Usar 201 Created","Usar 204 No Content e verificar existência antes","Usar 404 sempre"] },
+      { block: "code", isCode: true, text: "O que falta neste cadastro?",
+        code: `@PostMapping
+public ResponseEntity<Anime> cadastrar(@RequestBody Anime anime) {
+    template.update(
+        "INSERT INTO anime (titulo, autor) VALUES (?, ?)",
+        anime.getTitulo(),
+        anime.getAutor()
+    );
+    return ResponseEntity.ok(anime);
+}`,
+        options: ["Nada","Status 201, recuperação do ID gerado (KeyHolder) ou setId manual","Usar query() em vez de update()","@DeleteMapping"] },
+      { block: "code", isCode: true, text: "Por que este tratamento de exceção é problemático?",
+        code: `try {
+    Anime a = template.queryForObject(sql, mapper, id);
+    return ResponseEntity.ok(a);
+} catch (RuntimeException e) {
+    return ResponseEntity.notFound().build();
+}`,
+        options: ["Não é problemático","Captura RuntimeException esconde erros de SQL, conexão e configuração","Deveria capturar IOException","queryForObject nunca lança exceção"] },
+      { block: "code", isCode: true, text: "Listagem vazia deveria retornar:",
+        code: `@GetMapping
+public ResponseEntity<List<Anime>> listar() {
+    List<Anime> animes = template.query(
+        "SELECT * FROM anime",
+        new BeanPropertyRowMapper<>(Anime.class)
+    );
+    if (animes.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+    return ResponseEntity.ok(animes);
+}`,
+        options: ["404 Not Found","200 OK com lista vazia []","204 No Content","500 Error"] },
+      { block: "code", isCode: true, text: "O que falta para recuperar a chave gerada?",
+        code: `template.update(connection -> {
+    PreparedStatement ps = connection.prepareStatement(
+        "INSERT INTO anime (titulo, autor) VALUES (?, ?)"
+    );
+    ps.setString(1, anime.getTitulo());
+    ps.setString(2, anime.getAutor());
+    return ps;
+}, keyHolder);`,
+        options: ["Nada","Statement.RETURN_GENERATED_KEYS no prepareStatement","Usar queryForObject","@GetMapping"] },
+      { block: "code", isCode: true, text: "Se id não existir no banco:",
+        code: `@PutMapping("/{id}")
+public ResponseEntity<Anime> atualizar(
+        @RequestBody Anime anime,
+        @PathVariable UUID id) {
+    template.update(
+        "UPDATE anime SET titulo=?, autor=? WHERE id=?",
+        anime.getTitulo(), anime.getAutor(), id
+    );
+    return ResponseEntity.ok(anime);
+}`,
+        options: ["Retorna 404 automaticamente","update() retorna 0 linhas mas resposta ainda será 200 — falta verificar existência","Lança EmptyResultDataAccessException","Retorna 201"] },
+      { block: "code", isCode: true, text: "Qual risco de segurança?",
+        code: `String sql = "SELECT * FROM anime WHERE titulo = '" + titulo + "'";
+List<Anime> lista = template.query(sql, new BeanPropertyRowMapper<>(Anime.class));`,
+        options: ["Nenhum","SQL Injection por concatenação de string","CSRF apenas","XSS no JSON"] },
+      { block: "code", isCode: true, text: "Problema quando id não existe:",
+        code: `private boolean existePorId(UUID id) {
+    Anime anime = template.queryForObject(
+        "SELECT * FROM anime WHERE id = ?",
+        new BeanPropertyRowMapper<>(Anime.class),
+        id
+    );
+    return anime != null;
+}`,
+        options: ["Retorna false corretamente","Lança EmptyResultDataAccessException — COUNT(*) seria melhor","Retorna true","Retorna 404 HTTP"] },
+      { block: "code", isCode: true, text: "Quando <code>keyHolder.getKeyAs(UUID.class)</code> pode falhar?",
+        code: `UUID id = keyHolder.getKeyAs(UUID.class);`,
+        options: ["Nunca","Depende do banco/driver; alternativa é UUID.randomUUID()","Apenas em DELETE","Quando usa GET"] },
+      { block: "code", isCode: true, text: "Qual problema de estilo Java?",
+        code: `public AnimeController(JdbcTemplate template) {
+    this.template = template;
+}
+private final JdbcTemplate template;`,
+        options: ["Nenhum","Campo final deveria ser declarado antes do construtor (ordem/convenção)","JdbcTemplate não pode ser final","Construtor não pode receber JdbcTemplate"] },
+      { block: "code", isCode: true, text: "Se a rota espera UUID e cliente envia <code>/animes/abc</code>:",
+        code: `@GetMapping("/{id}")
+public ResponseEntity<Anime> buscar(@PathVariable String id) {`,
+        options: ["Spring converte automaticamente para UUID zero","Pode ocorrer erro de conversão (400 Bad Request)","Retorna 404 do banco","Ignora o path variable"] },
+      { block: "code", isCode: true, text: "Status 201 é adequado porque:",
+        code: `return ResponseEntity.status(201).body(animeParaCadastro);`,
+        options: ["Indica remoção bem-sucedida","Indica criação de novo recurso","Indica recurso não encontrado","Indica erro do servidor"] },
+      { block: "code", isCode: true, text: "Por que COUNT é adequado aqui?",
+        code: `Integer qtd = template.queryForObject(
+    "SELECT COUNT(*) FROM anime WHERE id = ?",
+    Integer.class,
+    id
+);
+return qtd != null && qtd > 0;`,
+        options: ["Porque lança exceção se não encontrar","Porque sempre retorna uma linha (0 ou mais), sem exceção","Porque retorna null sempre","Porque usa BeanPropertyRowMapper"] },
+      { block: "code", isCode: true, text: "Status incorreto. O correto seria:",
+        code: `@PostMapping
+public ResponseEntity<Anime> cadastrar(@RequestBody Anime anime) {
+    // insert...
+    return ResponseEntity.ok(anime);
+}`,
+        options: ["ResponseEntity.status(404)","ResponseEntity.status(201)","ResponseEntity.noContent()","ResponseEntity.status(500)"] },
+      { block: "code", isCode: true, text: "O terceiro argumento <code>autor</code>:",
+        code: `List<Anime> animes = template.query(
+    "SELECT * FROM anime WHERE autor = ?",
+    new BeanPropertyRowMapper<>(Anime.class),
+    autor
+);`,
+        options: ["É o RowMapper","É o valor do primeiro ? na SQL","É o status HTTP","É a chave gerada"] },
+      { block: "code", isCode: true, text: "Qual inconsistência no código?",
+        code: `@DeleteMapping("/{id}")
+public ResponseEntity<Anime> remover(@PathVariable UUID id) {
+    template.update("DELETE FROM anime WHERE id = ?", id);
+    return ResponseEntity.noContent().build();
+}`,
+        options: ["Nenhuma","Tipo genérico ResponseEntity<Anime> com noContent() — deveria ser ResponseEntity<Void>","DELETE deve usar query()","Deve retornar 201"] },
+      { block: "code", isCode: true, text: "Qual status e corpo quando <code>existePorId</code> retorna false no DELETE?",
+        code: `// Cliente: DELETE /animes/550e8400-e29b-41d4-a716-446655440000
+// existePorId retorna false
+return ResponseEntity.notFound().build();`,
+        options: ["404 sem corpo (ou corpo vazio)","204 No Content","200 OK","500 Internal Server Error"] }
+    ];
+const REACT_ANSWERS = {"1":"b","2":"c","3":"b","4":"a","5":"b","6":"a","7":"c","8":"c","9":"d","10":"c","11":"c","12":"c","13":"d","14":"b"};
+const REACT_QUESTIONS = [{"block":"react","showTitle":true,"blockTitle":"Quiz React — Simulado","text":"Props desestruturadas: <code>function CardPerfil({ ??? })</code> — o correto é:","options":["(nome, curso)","{nome, curso}","[nome, curso]","props.nome"]},{"block":"react","text":"Para reagir ao clique do botão usa-se:","options":["onChange","onSubmit","onClick","onLoad"]},{"block":"react","text":"Import correto de Titulo:","options":["import { Titulo } from ...","import Titulo from \"./componentes/Titulo\"","require(Titulo)","export Titulo"]},{"block":"react","text":"Fragment (&lt;&gt;&lt;/&gt;) é:","options":["Agrupa filhos sem div extra no DOM","Tipo de estado","Hook do React","Substituto de props"]},{"block":"react","text":"JSX verdadeiro/falso: I, II, III corretas. IV (Babel) e V (class) — resposta da prova:","options":["I, II, III e IV","I, II e III apenas","Todas as cinco","II e V"]},{"block":"react","text":"Perfil com Carlos, 20, Online, 21 — está correto?","options":["Sim — {} avalia JS no JSX","Não","Só strings","ativo sempre Offline"]},{"block":"react","text":"Qual afirmação sobre componentes é FALSA?","options":["Duas instâncias de Titulo são independentes","import é obrigatório","&lt;titulo /&gt; funciona como componente","export default permite import sem chaves"]},{"block":"react","text":"Componentes React — afirmação FALSA:","options":["Função que retorna JSX","Nome com maiúscula","Arquivo DEVE ter mesmo nome da função","Pode compor hierarquia"]},{"block":"react","text":"Props — afirmação FALSA:","options":["Pai → filho","Imutáveis no filho","Vários tipos JS","Não passada = null"]},{"block":"react","text":"Caixa yellow com Olá mundo renderiza:","options":["Só parágrafo","Texto solto","Div amarelo com Olá mundo!","Erro"]},{"block":"react","text":"useState — afirmação FALSA:","options":["Inicializa com 0","Setter re-renderiza","cont=cont+1 atualiza tela","Com setter cont vira 1"]},{"block":"react","text":"State — afirmação FALSA:","options":["Memória do componente","useState independente","Dois componentes compartilham state","Só setter redesenha"]},{"block":"react","text":"StatusLogin logado=false — afirmação FALSA:","options":["Ternário é condicional","Mostra Faça login","Pode usar &&","if/else direto no JSX"]},{"block":"react","text":"<Soma a={10} b={5} /> exibe:","options":["Resultado: 105","Resultado: 15","15","Erro"]}];
+
+(function () {
+  "use strict";
+
+  /* ── Filtros de conteúdo ── */
+  function filterTree(nodes, excludeId) {
+    return nodes
+      .filter(n => n.id !== excludeId)
+      .map(n => ({ ...n, children: n.children ? filterTree(n.children, excludeId) : undefined }));
+  }
+
+  function onlyBranch(nodes, keepId) {
+    return nodes.filter(n => n.id === "inicio" || n.id === keepId);
+  }
+
+  function flatten(nodes, acc) {
+    acc = acc || [];
+    nodes.forEach(n => {
+      if (n.children && n.children.length) flatten(n.children, acc);
+      else acc.push(n.id);
+    });
+    return acc;
+  }
+
+  const full = window.STUDY;
+
+  const CONTENT_BACKEND = { ...full.CONTENT };
+  CONTENT_BACKEND.inicio = {
+    tag: "root", tagLabel: "Backend",
+    title: "Programação Web Backend",
+    subtitle: "HTTP, APIs REST e JDBC com Spring Boot",
+    pills: ["HTTP", "REST", "JDBC", "Spring Boot", "CRUD"],
+    sections: [
+      { h: "Bem-vindo!", html: "<p>Apostila de <strong>backend</strong>: HTTP e <code>JdbcTemplate</code> no Spring Boot.</p><div class=\"alert ok\"><strong>Como estudar:</strong> siga o índice lateral. Cada capítulo tem código Java e alertas de prova.</div>" },
+      { h: "Conteúdo", html: "<div class=\"compare\"><div class=\"compare-box\"><h4>HTTP</h4><p>Métodos, status, cabeçalhos, HTTPS e REST.</p></div><div class=\"compare-box\"><h4>JDBC</h4><p>JdbcTemplate, CRUD Animes, KeyHolder e exceções.</p></div></div>" }
+    ]
+  };
+  const TREE_BACKEND = filterTree(full.TREE, "react-root");
+  const flatBackend = flatten(TREE_BACKEND);
+  window.STUDY_BACKEND = { TREE: TREE_BACKEND, CONTENT: CONTENT_BACKEND, flatOrder: flatBackend };
+
+  const reactIds = new Set(flatten(full.TREE.filter(n => n.id === "react-root")));
+  const CONTENT_FRONTEND = {};
+  reactIds.forEach(id => { if (full.CONTENT[id]) CONTENT_FRONTEND[id] = full.CONTENT[id]; });
+  CONTENT_FRONTEND.inicio = {
+    tag: "root", tagLabel: "Frontend",
+    title: "React — Frontend",
+    subtitle: "JSX, componentes, props, state e renderização",
+    pills: ["React", "JSX", "Props", "useState", "Hooks"],
+    sections: [
+      { h: "Bem-vindo!", html: "<p>Apostila de <strong>React</strong> baseada no simulado da disciplina.</p><div class=\"alert ok\">Depois de ler, faça o <strong>Quiz React</strong> (14 questões) na aba acima.</div>" },
+      { h: "Tópicos", html: "<ul><li>JSX e regras de sintaxe</li><li>Componentes e import/export</li><li>Props, children e desestruturação</li><li>useState e eventos</li><li>Renderização condicional e Fragment</li></ul>" }
+    ]
+  };
+  const TREE_FRONTEND = onlyBranch(full.TREE, "react-root");
+  const flatFrontend = flatten(TREE_FRONTEND);
+  window.STUDY_FRONTEND = { TREE: TREE_FRONTEND, CONTENT: CONTENT_FRONTEND, flatOrder: flatFrontend };
+
+  /* ── Painel de estudo (apostila / mapa) ── */
+  function StudyPanel(cfg) {
+    let activeId = cfg.flatOrder[0] || "inicio";
+    let searchTerm = "";
+
+    function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+    function renderHTML(id) {
+      const d = cfg.CONTENT[id];
+      if (!d) return "<p>Conteúdo não encontrado.</p>";
+      let html = `<span class="content-tag ${d.tag}">${d.tagLabel}</span><h1>${d.title}</h1><div class="subtitle">${d.subtitle}</div>`;
+      if (d.pills && d.pills.length) html += `<div class="pills">${d.pills.map(p => `<span class="pill">${p}</span>`).join("")}</div>`;
+      d.sections.forEach(s => { html += `<div class="section"><h3>${s.h}</h3>${s.html}</div>`; });
+      return html;
+    }
+
+    function breadcrumb(id) {
+      const path = [];
+      function walk(nodes, trail) {
+        for (const n of nodes) {
+          const t = [...trail, n.label];
+          if (n.id === id) { path.push(...t); return true; }
+          if (n.children && walk(n.children, t)) return true;
+        }
+        return false;
+      }
+      walk(cfg.TREE, []);
+      if (!path.length) return "";
+      const last = path.pop();
+      return path.join(" › ") + (path.length ? " › " : "") + `<span>${last}</span>`;
+    }
+
+    function nodeMatch(n) {
+      if (!searchTerm) return true;
+      const t = searchTerm.toLowerCase();
+      if (n.label.toLowerCase().includes(t)) return true;
+      const c = cfg.CONTENT[n.id];
+      return c && (c.title.toLowerCase().includes(t) || c.subtitle.toLowerCase().includes(t));
+    }
+
+    function subtreeMatch(n) {
+      if (nodeMatch(n)) return true;
+      return n.children ? n.children.some(subtreeMatch) : false;
+    }
+
+    function renderTree(nodes, container, depth) {
+      nodes.forEach(node => {
+        if (searchTerm && !subtreeMatch(node)) return;
+        const hasChildren = node.children && node.children.length;
+        const wrap = document.createElement("div");
+        const item = document.createElement("div");
+        item.className = "tree-item" + (node.branch ? " " + node.branch : "");
+        if (node.id === activeId) item.classList.add("active");
+        item.style.paddingLeft = (8 + depth * 14) + "px";
+        item.dataset.id = node.id;
+
+        const toggle = document.createElement("span");
+        toggle.className = "tree-toggle" + (hasChildren ? "" : " empty");
+        toggle.textContent = hasChildren ? (depth < 2 || searchTerm ? "▼" : "▶") : "";
+
+        const label = document.createElement("span");
+        label.className = "tree-label";
+        label.textContent = node.label;
+        if (searchTerm && nodeMatch(node)) {
+          label.innerHTML = node.label.replace(new RegExp(`(${esc(searchTerm)})`, "gi"), "<mark>$1</mark>");
+        }
+
+        item.appendChild(toggle);
+        item.appendChild(label);
+
+        if (cfg.CONTENT[node.id]) {
+          const go = () => { select(node.id); closeMobileSidebar(cfg.layoutId); };
+          item.addEventListener("click", go);
+          item.addEventListener("touchend", e => { e.preventDefault(); go(); });
+        } else if (hasChildren) {
+          const expand = e => { e.stopPropagation(); toggle.click(); };
+          item.addEventListener("click", expand);
+          item.addEventListener("touchend", e => { e.preventDefault(); expand(e); });
+        }
+
+        wrap.appendChild(item);
+
+        if (hasChildren) {
+          const childWrap = document.createElement("div");
+          childWrap.className = "tree-children" + (depth < 2 || searchTerm ? " open" : "");
+          renderTree(node.children, childWrap, depth + 1);
+          toggle.addEventListener("click", e => {
+            e.stopPropagation();
+            toggle.textContent = childWrap.classList.toggle("open") ? "▼" : "▶";
+          });
+          wrap.appendChild(childWrap);
+        }
+        container.appendChild(wrap);
+      });
+    }
+
+    function select(id) {
+      if (!cfg.CONTENT[id]) return;
+      activeId = id;
+      const treeEl = document.getElementById(cfg.treeId);
+      if (treeEl) { treeEl.innerHTML = ""; renderTree(cfg.TREE, treeEl, 0); }
+      const main = document.getElementById(cfg.contentId);
+      if (main) main.innerHTML = renderHTML(id);
+      const bc = document.getElementById(cfg.bcId);
+      if (bc) bc.innerHTML = breadcrumb(id);
+      updateNav();
+      if (cfg.onSelect) cfg.onSelect(id);
+      main?.closest(".main")?.scrollTo(0, 0);
+    }
+
+    function updateNav() {
+      const idx = cfg.flatOrder.indexOf(activeId);
+      const prev = document.getElementById(cfg.prevId);
+      const next = document.getElementById(cfg.nextId);
+      if (prev) prev.disabled = idx <= 0;
+      if (next) next.disabled = idx >= cfg.flatOrder.length - 1;
+    }
+
+    function renderAll() {
+      const el = document.getElementById(cfg.allId);
+      if (!el) return;
+      el.innerHTML = cfg.flatOrder.filter(id => cfg.CONTENT[id])
+        .map(id => `<article class="section-block" id="topic-${id}">${renderHTML(id)}</article>`).join("");
+    }
+
+    function collectLeaves(node, out) {
+      if (node.children && node.children.length) node.children.forEach(c => collectLeaves(c, out));
+      else if (cfg.CONTENT[node.id]) out.push({ id: node.id, label: node.label });
+    }
+
+    function renderMind() {
+      const el = document.getElementById(cfg.mindId);
+      if (!el) return;
+      const branches = cfg.mindBranches || [
+        { rootId: "http-root", cls: "http", label: "HTTP / REST" },
+        { rootId: "jdbc-root", cls: "jdbc", label: "JDBC + Spring" },
+        { rootId: "react-root", cls: "react", label: "React" }
+      ];
+      let html = `<div class="mind-root"><span data-id="inicio">${cfg.mindRootLabel || "Programação Web"}</span></div><div class="mind-branches">`;
+      branches.forEach(({ rootId, cls, label }) => {
+        const root = cfg.TREE.find(n => n.id === rootId);
+        const leaves = [];
+        if (root) collectLeaves(root, leaves);
+        html += `<div class="mind-branch ${cls}"><h4 data-id="${rootId}">${label}</h4>`;
+        leaves.slice(0, 10).forEach(l => { html += `<div class="mind-leaf" data-id="${l.id}">${l.label}</div>`; });
+        if (leaves.length > 10) html += `<div class="mind-leaf" style="opacity:.55;font-size:.72rem">+ ${leaves.length - 10} na árvore</div>`;
+        html += `</div>`;
+      });
+      html += `</div>`;
+      el.innerHTML = html;
+      el.querySelectorAll("[data-id]").forEach(node => {
+        node.addEventListener("click", () => { if (cfg.CONTENT[node.dataset.id]) select(node.dataset.id); });
+      });
+    }
+
+    function init() {
+      const stats = document.getElementById(cfg.statsId);
+      if (stats) stats.textContent = `${cfg.flatOrder.length} tópicos · ${cfg.statsLabel || ""}`;
+
+      document.getElementById(cfg.searchId)?.addEventListener("input", e => {
+        searchTerm = e.target.value.trim().toLowerCase();
+        const treeEl = document.getElementById(cfg.treeId);
+        if (treeEl) { treeEl.innerHTML = ""; renderTree(cfg.TREE, treeEl, 0); }
+      });
+
+      document.getElementById(cfg.prevId)?.addEventListener("click", () => {
+        const idx = cfg.flatOrder.indexOf(activeId);
+        if (idx > 0) select(cfg.flatOrder[idx - 1]);
+      });
+      document.getElementById(cfg.nextId)?.addEventListener("click", () => {
+        const idx = cfg.flatOrder.indexOf(activeId);
+        if (idx < cfg.flatOrder.length - 1) select(cfg.flatOrder[idx + 1]);
+      });
+
+      if (cfg.allId) renderAll();
+      if (cfg.mindId) {
+        renderMind();
+        cfg.onSelect = id => {
+          document.querySelectorAll(`#${cfg.mindId} .mind-leaf, #${cfg.mindId} .mind-root span, #${cfg.mindId} .mind-branch h4`).forEach(n => {
+            n.classList.toggle("active", n.dataset.id === id);
+          });
+        };
+      }
+
+      const treeEl = document.getElementById(cfg.treeId);
+      if (treeEl) { treeEl.innerHTML = ""; renderTree(cfg.TREE, treeEl, 0); }
+      select(activeId);
+    }
+
+    return { init, select };
+  }
+
+  const panels = {
+    backend: StudyPanel({
+      ...window.STUDY_BACKEND, statsLabel: "HTTP + JDBC", layoutId: "layout-backend",
+      treeId: "tree-backend", contentId: "content-backend", bcId: "bc-backend",
+      statsId: "stats-backend", searchId: "search-backend",
+      prevId: "prev-backend", nextId: "next-backend", allId: "all-backend",
+      mindBranches: [
+        { rootId: "http-root", cls: "http", label: "HTTP / REST" },
+        { rootId: "jdbc-root", cls: "jdbc", label: "JDBC + Spring" }
+      ]
+    }),
+    frontend: StudyPanel({
+      ...window.STUDY_FRONTEND, statsLabel: "React", layoutId: "layout-frontend",
+      treeId: "tree-frontend", contentId: "content-frontend", bcId: "bc-frontend",
+      statsId: "stats-frontend", searchId: "search-frontend",
+      prevId: "prev-frontend", nextId: "next-frontend", allId: "all-frontend",
+      mindBranches: [{ rootId: "react-root", cls: "react", label: "React" }],
+      mindRootLabel: "React Frontend"
+    }),
+    mapa: StudyPanel({
+      ...full, statsLabel: "HTTP + JDBC + React", layoutId: "layout-mapa",
+      treeId: "tree-mapa", contentId: "content-mapa", bcId: "bc-mapa",
+      statsId: "stats-mapa", searchId: "search-mapa",
+      prevId: "prev-mapa", nextId: "next-mapa", mindId: "mind-visual"
+    })
+  };
+
+  let inited = { backend: false, frontend: false, mapa: false };
+
+  function closeMobileSidebar(layoutId) {
+    if (!layoutId) return;
+    document.getElementById(layoutId)?.classList.remove("sidebar-open");
+    document.querySelector(`[data-overlay="${layoutId}"]`)?.classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function initMobileSidebars() {
+    document.querySelectorAll("[data-sidebar-toggle]").forEach(btn => {
+      const open = e => {
+        if (e) e.preventDefault();
+        const layout = document.getElementById(btn.dataset.sidebarToggle);
+        const overlay = document.querySelector(`[data-overlay="${btn.dataset.sidebarToggle}"]`);
+        const isOpen = layout?.classList.toggle("sidebar-open");
+        overlay?.classList.toggle("open", !!isOpen);
+        document.body.style.overflow = isOpen ? "hidden" : "";
+      };
+      btn.addEventListener("click", open);
+      btn.addEventListener("touchend", e => { e.preventDefault(); open(e); });
+    });
+    document.querySelectorAll(".sidebar-overlay").forEach(ov => {
+      const close = e => { if (e) e.preventDefault(); closeMobileSidebar(ov.dataset.overlay); };
+      ov.addEventListener("click", close);
+      ov.addEventListener("touchend", e => { e.preventDefault(); close(e); });
+    });
+  }
+
+  function bindTap(el, fn) {
+    if (!el) return;
+    let last = 0;
+    const run = e => {
+      const now = Date.now();
+      if (now - last < 300) return;
+      last = now;
+      fn(e);
+    };
+    el.addEventListener("click", run);
+    el.addEventListener("touchend", e => { e.preventDefault(); run(e); }, { passive: false });
+  }
+
+  function showPanel(name) {
+    document.querySelectorAll(".study-layout").forEach(l => l.classList.remove("sidebar-open"));
+    document.querySelectorAll(".sidebar-overlay").forEach(o => o.classList.remove("open"));
+    document.body.style.overflow = "";
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.panel === name));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    document.getElementById("panel-" + name)?.classList.add("active");
+    if (panels[name] && !inited[name]) { panels[name].init(); inited[name] = true; }
+  }
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    bindTap(btn, () => showPanel(btn.dataset.panel));
+  });
+  document.querySelectorAll(".home-card").forEach(card => {
+    bindTap(card, () => showPanel(card.dataset.go));
+  });
+
+  /* ── Sub-tabs apostila ── */
+  document.querySelectorAll(".sub-tab").forEach(tab => {
+    bindTap(tab, () => {
+      const forPanel = tab.dataset.for;
+      const view = tab.dataset.view;
+      document.querySelectorAll(`.sub-tab[data-for="${forPanel}"]`).forEach(t => t.classList.toggle("active", t === tab));
+      const sidebar = document.getElementById(`view-${forPanel}-sidebar`);
+      const full = document.getElementById(`view-${forPanel}-full`);
+      if (view === "sidebar") {
+        sidebar?.classList.remove("hidden");
+        full?.classList.add("hidden");
+      } else {
+        sidebar?.classList.add("hidden");
+        full?.classList.remove("hidden");
+        if (panels[forPanel] && !inited[forPanel]) { panels[forPanel].init(); inited[forPanel] = true; }
+      }
+    });
+  });
+
+  /* ── Quiz genérico ── */
+  function buildQuiz(opts) {
+    const LETTERS = ["a", "b", "c", "d"];
+    let corrected = false;
+    let currentFilter = "all";
+    const form = document.getElementById(opts.formId);
+    const prefix = opts.prefix;
+
+    function escHtml(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function render() {
+      form.innerHTML = "";
+      opts.questions.forEach((q, index) => {
+        const num = index + 1;
+        if (q.showTitle) {
+          const title = document.createElement("h2");
+          title.className = "block-title";
+          title.dataset.block = q.block;
+          title.textContent = q.blockTitle;
+          form.appendChild(title);
+        }
+        const card = document.createElement("div");
+        card.className = "question-card";
+        card.dataset.num = num;
+        card.dataset.block = q.block;
+        card.dataset.answered = "false";
+
+        let html = `<div class="question-header"><div class="question-number">${num}</div><div class="question-text">${q.text}</div></div>`;
+        if (q.code) html += `<pre class="code-block">${escHtml(q.code)}</pre>`;
+        html += `<ul class="options">`;
+        q.options.forEach((opt, i) => {
+          html += `<li class="option" data-letter="${LETTERS[i]}"><label><input type="radio" name="${prefix}q${num}" value="${LETTERS[i]}"><span>${LETTERS[i]}) ${opt}</span></label></li>`;
+        });
+        html += `</ul><div class="feedback" id="${prefix}fb-${num}"></div>`;
+        card.innerHTML = html;
+        form.appendChild(card);
+        card.querySelectorAll(".option").forEach(opt => {
+          bindTap(opt, () => {
+            const radio = opt.querySelector('input[type="radio"]');
+            if (radio && !radio.disabled) {
+              radio.checked = true;
+              card.dataset.answered = "true";
+              updateStats();
+              applyFilter(currentFilter);
+            }
+          });
+        });
+      });
+    }
+
+    function answeredCount() {
+      return form.querySelectorAll('.question-card[data-answered="true"]').length;
+    }
+
+    function updateStats() {
+      const total = opts.questions.length;
+      const ans = answeredCount();
+      const el = document.getElementById(prefix + "answered");
+      if (el) el.textContent = ans;
+      const pl = document.getElementById(prefix + "plabel");
+      const pf = document.getElementById(prefix + "pfill");
+      if (pl) pl.textContent = `${ans}/${total}`;
+      if (pf) pf.style.width = `${(ans / total) * 100}%`;
+    }
+
+    function applyFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll(`#${opts.filtersId} .filter-btn`).forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.f === filter);
+      });
+      form.querySelectorAll(".block-title").forEach(el => {
+        const block = el.dataset.block;
+        el.style.display = filter === "all" || filter === block ? "" : "none";
+      });
+      form.querySelectorAll(".question-card").forEach(card => {
+        const block = card.dataset.block;
+        card.style.display = filter === "all" || filter === block ? "" : "none";
+      });
+    }
+
+    function correct() {
+      const total = opts.questions.length;
+      if (!corrected && answeredCount() < total) {
+        if (!confirm(`Você respondeu ${answeredCount()} de ${total}. Corrigir mesmo assim?`)) return;
+      }
+      corrected = true;
+      let correctN = 0;
+      for (let num = 1; num <= total; num++) {
+        const card = form.querySelector(`.question-card[data-num="${num}"]`);
+        const selected = form.querySelector(`input[name="${prefix}q${num}"]:checked`);
+        const answer = opts.answers[num];
+        const fb = document.getElementById(`${prefix}fb-${num}`);
+        card.classList.remove("ok", "bad");
+        card.querySelectorAll(".option").forEach(opt => {
+          opt.classList.remove("ok", "bad");
+          if (opt.dataset.letter === answer) opt.classList.add("ok");
+        });
+        if (!selected) {
+          fb.textContent = `Em branco. Resposta: ${answer.toUpperCase()})`;
+          fb.className = "feedback show bad";
+          continue;
+        }
+        form.querySelectorAll(`input[name="${prefix}q${num}"]`).forEach(i => i.disabled = true);
+        if (selected.value === answer) {
+          correctN++;
+          card.classList.add("ok");
+          fb.textContent = "Correto!";
+          fb.className = "feedback show ok";
+        } else {
+          card.classList.add("bad");
+          selected.closest(".option").classList.add("bad");
+          fb.textContent = `Incorreto. Resposta: ${answer.toUpperCase()})`;
+          fb.className = "feedback show bad";
+        }
+      }
+      const panel = document.getElementById(prefix + "result");
+      document.getElementById(prefix + "score").textContent = `${correctN}/${total}`;
+      const msg = document.getElementById(prefix + "msg");
+      if (msg) {
+        const pct = (correctN / total) * 100;
+        msg.textContent = pct >= 85 ? "Excelente!" : pct >= 70 ? "Bom! Revise os erros." : pct >= 50 ? "Precisa revisar mais." : "Estude a apostila e tente de novo.";
+      }
+      panel?.classList.add("show");
+      panel?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function reset() {
+      if (!confirm("Reiniciar o quiz?")) return;
+      corrected = false;
+      document.getElementById(prefix + "result")?.classList.remove("show");
+      render();
+      updateStats();
+      applyFilter(currentFilter);
+    }
+
+    document.getElementById(opts.goId) && bindTap(document.getElementById(opts.goId), correct);
+    document.getElementById(opts.resetId) && bindTap(document.getElementById(opts.resetId), reset);
+    document.querySelectorAll(`#${opts.filtersId} .filter-btn`).forEach(btn => {
+      bindTap(btn, () => applyFilter(btn.dataset.f));
+    });
+
+    render();
+    updateStats();
+  }
+
+  buildQuiz({
+    formId: "qb-form", prefix: "qb-", filtersId: "qb-filters",
+    goId: "qb-go", resetId: "qb-reset",
+    questions: typeof QUESTIONS !== "undefined" ? QUESTIONS : [],
+    answers: typeof ANSWERS !== "undefined" ? ANSWERS : {}
+  });
+
+  buildQuiz({
+    formId: "qr-form", prefix: "qr-", filtersId: "qr-filters",
+    goId: "qr-go", resetId: "qr-reset",
+    questions: typeof REACT_QUESTIONS !== "undefined" ? REACT_QUESTIONS : [],
+    answers: typeof REACT_ANSWERS !== "undefined" ? REACT_ANSWERS : {}
+  });
+
+  initMobileSidebars();
+})();
+
+</script>
+</body>
+</html>
